@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#111827"/>
+  <g fill="none" stroke="#f6c84c" stroke-width="6">
+    <circle cx="300" cy="300" r="180" />
+    <path d="M180 420 L420 180" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="50%" y="90%" fill="#9ca3af" font-family="Arial" font-size="28" text-anchor="middle">God Loves Ugly — 2002</text>
+</svg>
