@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState, useRef } from 'react'
 
 // Rating component supports 0.5 increments (half-stars).

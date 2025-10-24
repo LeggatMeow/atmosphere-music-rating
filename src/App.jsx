@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react'
 import { bandData } from './data/bandData'
 import AlbumList from './components/AlbumList'

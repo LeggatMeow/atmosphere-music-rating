@@ -1,3 +1,4 @@
+import React from 'react';
 import SongRating from './SongRating'
 
 export default function SongList({ songs }) {
