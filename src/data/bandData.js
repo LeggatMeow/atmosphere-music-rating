@@ -6,7 +6,7 @@ export const bandData = {
       id: 'god-loves-ugly',
       title: "God Loves Ugly",
       year: 2002,
-      cover: "/album-covers/god-loves-ugly.svg",
+      cover: null, // will be fetched
       songs: [
         { id: 'olu-1', title: "Onemosphere", duration: "1:12" },
         { id: 'glu-2', title: "The Bass And The Movement", duration: "3:45" },
@@ -32,7 +32,7 @@ export const bandData = {
       id: 'sevens-travels',
       title: "Seven's Travels",
       year: 2003,
-      cover: "/album-covers/sevens-travels.svg",
+      cover: null, // will be fetched
       songs: [
         { id: 'st-1', title: "History", duration: "3:13" },
         { id: 'st-2', title: "Trying to Find a Balance", duration: "3:42" },
@@ -59,7 +59,7 @@ export const bandData = {
       id: 'southsiders',
       title: "Southsiders",
       year: 2014,
-      cover: "/album-covers/southsiders.svg",
+      cover: null, // will be fetched
       songs: [
         { id: 'ss-1', title: "Camera Thief", duration: "3:15" },
         { id: 'ss-2', title: "Arthur's Song", duration: "3:41" },
