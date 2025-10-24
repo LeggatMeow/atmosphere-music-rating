@@ -1,7 +1,7 @@
 import React from 'react';
-import SongRating from './SongRating'
+import SongRating from './SongRating';
 
-export default function SongList({ songs }) {
+export default function SongList({ songs, onRateChange }) {
   return (
     <div className="space-y-3">
       {songs.map((song, idx) => (
@@ -10,9 +10,9 @@ export default function SongList({ songs }) {
             <p className="font-medium">{idx + 1}. {song.title}</p>
             <p className="text-gray-400 text-sm">{song.duration}</p>
           </div>
-          <SongRating songId={song.id} />
+          <SongRating songId={song.id} onRateChange={onRateChange} />
         </div>
       ))}
     </div>
-  )
+  );
 }
