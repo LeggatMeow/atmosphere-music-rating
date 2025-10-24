@@ -17,7 +17,7 @@ export default function AlbumList({ albums, onSelect }) {
       {albums.map((album) => (
         <div
           key={album.id}
-          onClick={() => onSelect(album)}
+          onClick={() => onSelect({ ...album, cover: covers[album.id] })}
           className="bg-neutral-800 rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-transform"
         >
           <img
