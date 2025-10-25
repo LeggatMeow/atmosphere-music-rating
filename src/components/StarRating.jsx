@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 export default function StarRating({ rating, onChange }) {
   const [hover, setHover] = useState(null);
@@ -19,8 +18,14 @@ export default function StarRating({ rating, onChange }) {
 
   const displayRating = hover !== null ? hover : rating;
 
+  const renderStar = (starIndex) => {
+    if (displayRating >= starIndex) return "★"; // full star
+    if (displayRating + 0.5 === starIndex) return "☆"; // half star (approx)
+    return "☆"; // empty star
+  };
+
   return (
-    <div className="flex space-x-1">
+    <div className="flex space-x-1 text-yellow-400 text-xl relative">
       {[1, 2, 3, 4, 5].map((star) => (
         <span key={star} className="relative inline-block">
           {/* Left half */}
@@ -37,14 +42,8 @@ export default function StarRating({ rating, onChange }) {
             onMouseEnter={() => handleMouseEnter(star, false)}
             onMouseLeave={handleMouseLeave}
           />
-          {/* Star icon */}
-          {displayRating >= star ? (
-            <FaStar className="text-yellow-400" />
-          ) : displayRating + 0.5 === star ? (
-            <FaStarHalfAlt className="text-yellow-400" />
-          ) : (
-            <FaRegStar className="text-yellow-400" />
-          )}
+          {/* Star */}
+          <span>{renderStar(star)}</span>
         </span>
       ))}
     </div>
