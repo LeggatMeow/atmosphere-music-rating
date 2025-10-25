@@ -122,7 +122,7 @@ setFavoriteCount(favCount);
                 </p>
                 <p className="text-gray-400 text-sm flex items-center gap-1">
                   <span className="text-red-400">♥</span>
-                    {favoriteCount}/{songs.length} favorited
+                    {favoriteCount}
                 </p>
 
               </>
