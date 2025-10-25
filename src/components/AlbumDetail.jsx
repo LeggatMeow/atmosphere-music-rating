@@ -1,48 +1,39 @@
-import React from 'react';
-import SongList from './SongList';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import StarRating from "./StarRating"; // A component for 1–5 star rating
 
-export default function AlbumDetail({ album, onBack }) {
-  const [albumAverage, setAlbumAverage] = useState(null);
-
-  const calculateAverage = () => {
-    const ratings = album.songs
-      .map(song => {
-        const saved = localStorage.getItem(`rating-${song.id}`);
-        return saved ? parseFloat(saved) : 0;
-      })
-      .filter(r => r > 0);
-
-    if (ratings.length === 0) return null;
-    const sum = ratings.reduce((a, b) => a + b, 0);
-    return (sum / ratings.length).toFixed(2);
-  };
-
-  useEffect(() => {
-    setAlbumAverage(calculateAverage());
-  }, []);
-
-  const handleRateChange = () => {
-    setAlbumAverage(calculateAverage());
-  };
+export default function SongList({ songs, onRateChange }) {
+  if (!songs || songs.length === 0) return <p>No tracks available.</p>;
 
   return (
-    <div>
-      <button onClick={onBack} className="text-sm text-gray-400 mb-4">← Back</button>
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start">
-        <img src={album.cover} alt={album.title} className="w-48 rounded-lg shadow-lg" />
-        <div>
-          <h2 className="text-2xl font-bold">{album.title}</h2>
-          <p className="text-gray-400 mb-1">{album.year}</p>
-          <p className="text-yellow-400 font-semibold mb-4">
-            {albumAverage ? `Album Avg: ${albumAverage} ⭐` : 'No ratings yet'}
-          </p>
-          <p className="text-gray-300 max-w-xl">Album tracklist — rate songs with 1–5 stars (half stars supported).</p>
-        </div>
-      </div>
-
-      <SongList songs={album.songs} onRateChange={handleRateChange} />
+    <div className="space-y-4">
+      {songs.map((song, index) => (
+        <SongItem key={index} song={song} onRateChange={onRateChange} />
+      ))}
     </div>
   );
 }
+
+function SongItem({ song, onRateChange }) {
+  const [rating, setRating] = useState(0);
+
+  // Load saved rating from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(`rating-${song.id}`);
+    if (saved) setRating(parseFloat(saved));
+  }, [song.id]);
+
+  const handleRatingChange = (newRating) => {
+    setRating(newRating);
+    localStorage.setItem(`rating-${song.id}`, newRating);
+    onRateChange(); // update album average
+  };
+
+  return (
+    <div className="flex items-center justify-between p-2 bg-neutral-800 rounded">
+      <span>{song.title}</span>
+      <StarRating rating={rating} onChange={handleRatingChange} />
+    </div>
+  );
+}
+
 
