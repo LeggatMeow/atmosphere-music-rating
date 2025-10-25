@@ -6,6 +6,8 @@ import AlbumDetail from "./components/AlbumDetail";
 
 export default function App() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [sortMode, setSortMode] = useState("oldest");
+
 
   const handleSelectAlbum = (albumId) => {
     // 1) Find album metadata by id
@@ -38,10 +40,39 @@ export default function App() {
           </div>
         </header>
 
+        
+        {!selectedAlbum && (
+  <div className="flex gap-4 mb-6 text-sm">
+    <button
+      onClick={() => setSortMode("oldest")}
+      className={sortMode === "oldest" ? "text-yellow-400 font-semibold" : "text-gray-400"}
+    >
+      Oldest
+    </button>
+    <button
+      onClick={() => setSortMode("newest")}
+      className={sortMode === "newest" ? "text-yellow-400 font-semibold" : "text-gray-400"}
+    >
+      Newest
+    </button>
+    <button
+      onClick={() => setSortMode("highest")}
+      className={sortMode === "highest" ? "text-yellow-400 font-semibold" : "text-gray-400"}
+    >
+      Highest Rated
+    </button>
+  </div>
+)}
+
         {selectedAlbum ? (
           <AlbumDetail album={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
         ) : (
-          <AlbumList albums={bandData.albums} onSelect={handleSelectAlbum} />
+          <AlbumList
+  albums={bandData.albums}
+  onSelect={handleSelectAlbum}
+  sortMode={sortMode}
+/>
+
         )}
       </div>
     </div>

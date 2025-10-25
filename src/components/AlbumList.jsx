@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
+// src/components/AlbumList.jsx
+import React, { useEffect, useState, useMemo } from "react";
 import { fetchAlbumArt } from "../utils/fetchAlbumArt";
+
+function getRatingColor(avg) {
+  if (avg >= 4) return "text-green-400";
+  if (avg >= 2.5) return "text-yellow-400";
+  return "text-red-400";
+}
 
 function AlbumCard({ album, onSelect }) {
   const [cover, setCover] = useState(null);
@@ -19,7 +26,6 @@ function AlbumCard({ album, onSelect }) {
 
   const songs = album.songs ?? [];
 
-  // Calculate average + count for display
   const ratings = songs.map(song => {
     const saved = localStorage.getItem(`rating-${song.id}`);
     return saved ? parseFloat(saved) : 0;
@@ -29,9 +35,11 @@ function AlbumCard({ album, onSelect }) {
     ? (ratings.filter(r => r > 0).reduce((a,b)=>a+b,0) / ratedCount).toFixed(1)
     : null;
 
+  const progressPercent = (ratedCount / songs.length) * 100;
+
   return (
     <button
-      className="bg-neutral-800 p-3 rounded shadow hover:shadow-lg text-left w-full"
+      className="bg-neutral-800 p-3 rounded shadow hover:shadow-lg transition-all text-left w-full"
       onClick={() => onSelect(album.id)}
     >
       <div className="relative mb-2">
@@ -43,10 +51,15 @@ function AlbumCard({ album, onSelect }) {
           />
         )}
 
-        {/* ⭐ Overlay for rating */}
+        {/* Overlay animated in only if avg exists */}
         {avg && (
-          <div className="absolute bottom-0 left-0 w-full bg-black/60 text-yellow-400 text-sm p-1 flex items-center gap-1">
-            {avg}⭐
+          <div className={`absolute bottom-0 left-0 w-full bg-black/60 text-sm p-1 
+            flex items-center gap-1 justify-center 
+            ${getRatingColor(avg)}
+            transition-opacity duration-500
+            opacity-100`}
+          >
+            {avg} ⭐
           </div>
         )}
       </div>
@@ -54,24 +67,31 @@ function AlbumCard({ album, onSelect }) {
       <div className="font-bold">{album.title}</div>
       <div className="text-gray-400">{album.year}</div>
 
+      {/* Progress text */}
       {ratedCount > 0 && (
         <div className="text-gray-500 text-sm">
           Songs rated: {ratedCount}/{songs.length}
         </div>
       )}
+
+      {/* Progress bar */}
+      <div className="w-full h-1 bg-neutral-700 rounded mt-1">
+        <div
+          className="h-1 bg-yellow-400 rounded transition-all duration-500"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
     </button>
   );
 }
 
-
 function AlbumSection({ title, albums, onSelect }) {
   if (!albums?.length) return null;
-
   return (
     <div className="mb-10">
       <h2 className="text-xl font-bold mb-4 text-gray-200">{title}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {albums.map((album) => (
+        {albums.map(album => (
           <AlbumCard key={album.id} album={album} onSelect={onSelect} />
         ))}
       </div>
@@ -79,16 +99,43 @@ function AlbumSection({ title, albums, onSelect }) {
   );
 }
 
-export default function AlbumList({ albums, onSelect }) {
-  const studios = albums.filter((a) => a.type === "studio");
-  const eps = albums.filter((a) => a.type === "ep");
-  const compilations = albums.filter((a) => a.type === "compilation");
+export default function AlbumList({ albums, onSelect, sortMode }) {
+  const sortedAlbums = useMemo(() => {
+    let list = [...albums];
+
+    // ✅ Sorting logic
+    if (sortMode === "highest") {
+      return list.sort((a, b) => {
+        const getAvg = album => {
+          const songs = album.songs ?? [];
+          const ratings = songs.map(song => {
+            const saved = localStorage.getItem(`rating-${song.id}`);
+            return saved ? parseFloat(saved) : 0;
+          });
+          const ratedCount = ratings.filter(r => r > 0).length;
+          if (!ratedCount) return 0;
+          return ratings.reduce((x,y)=>x+y,0) / ratedCount;
+        };
+        return getAvg(b) - getAvg(a);
+      });
+    }
+
+    if (sortMode === "newest") {
+      return list.sort((a, b) => b.year - a.year);
+    }
+
+    return list.sort((a, b) => a.year - b.year); // default oldest
+  }, [albums, sortMode]);
+
+  const studios = sortedAlbums.filter(a => a.type === "studio");
+  const eps = sortedAlbums.filter(a => a.type === "ep");
+  const comps = sortedAlbums.filter(a => a.type === "compilation");
 
   return (
     <>
       <AlbumSection title="Studio Albums" albums={studios} onSelect={onSelect} />
       <AlbumSection title="EPs" albums={eps} onSelect={onSelect} />
-      <AlbumSection title="Compilations" albums={compilations} onSelect={onSelect} />
+      <AlbumSection title="Compilations" albums={comps} onSelect={onSelect} />
     </>
   );
 }
