@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import StarRating from "./StarRating"; // A component for 1–5 star rating
 
 export default function SongList({ songs, onRateChange }) {
+
+  console.log(album);
+
   if (!songs || songs.length === 0) return <p>No tracks available.</p>;
 
   return (
