@@ -118,12 +118,14 @@ export default function AlbumDetail({ album, onBack }) {
       </div>
 
 {topTracks.length > 0 && (
-  <div className="mb-6">
-    <div className="flex items-center gap-2">
-      <h3 className="text-lg font-bold text-yellow-400">🔥 Top Rated Tracks</h3>
+  <div className="mb-6 bg-neutral-850 p-3 rounded-lg shadow-md border border-neutral-700/50">
+    <div className="flex items-center gap-2 mb-2">
+      <span className="text-lg">🔥</span>
+      <h3 className="text-lg font-semibold text-yellow-400">Top Rated Tracks</h3>
+
       {topTracks.length > 3 && (
         <button
-          className="text-xs text-gray-400 underline"
+          className="text-xs text-gray-400 underline ml-auto"
           onClick={() => setExpanded((prev) => !prev)}
         >
           {expanded ? "Show Less" : "Show All"}
@@ -131,7 +133,7 @@ export default function AlbumDetail({ album, onBack }) {
       )}
     </div>
 
-    <ul className="space-y-1 mt-2">
+    <ul className="space-y-1">
       {topTracks
         .slice(0, expanded ? topTracks.length : 3)
         .map((song, index) => (
@@ -139,20 +141,23 @@ export default function AlbumDetail({ album, onBack }) {
             key={song.id}
             onClick={() => {
               const el = document.getElementById(song.id);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "center"});
             }}
             className="flex justify-between items-center bg-neutral-800 p-2 rounded cursor-pointer hover:bg-neutral-700 transition-all duration-200"
-            style={{ transition: "all 0.3s ease" }}
           >
-            <span>
+            <span className="text-sm text-gray-200">
               {index + 1}. {song.title}
             </span>
-            <span className="text-yellow-400">{song.rating.toFixed(1)} ⭐</span>
+            <span className="text-yellow-400 text-sm">
+              {song.rating.toFixed(1)} ⭐
+            </span>
           </li>
         ))}
     </ul>
   </div>
+  <div className="border-b border-neutral-700/50 my-6"></div>
 )}
+
 
       {album.type === "studio" ? (
         <SongList
