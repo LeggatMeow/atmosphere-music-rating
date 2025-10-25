@@ -30,13 +30,14 @@ export default function AlbumDetail({ album, onBack }) {
   };
 
   useEffect(() => {
-    setAlbumAverage(calculateAverage());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [album?.id]);
+  setAlbumAverage(calculateAverage());
+}, [album.songs]); // recalc if songs change
 
-  const handleRateChange = () => {
-    setAlbumAverage(calculateAverage());
-  };
+
+const handleRateChange = () => {
+  const newAvg = calculateAverage();
+  setAlbumAverage(newAvg);
+};
 
   useEffect(() => {
     let cancelled = false;
