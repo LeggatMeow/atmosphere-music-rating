@@ -10,10 +10,7 @@ function getRatingColor(avg) {
 
 function AlbumCard({ album, onSelect }) {
   const [cover, setCover] = useState(null);
-  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-  const favoriteCount = songs.filter((s) => favorites.includes(s.id)).length;
-
-
+  
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -28,6 +25,9 @@ function AlbumCard({ album, onSelect }) {
   }, [album.title]);
 
   const songs = album.songs ?? [];
+
+  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+  const favoriteCount = songs.filter((s) => favorites.includes(s.id)).length;
 
   const ratings = songs.map(song => {
     const saved = localStorage.getItem(`rating-${song.id}`);
