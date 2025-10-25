@@ -1,59 +1,65 @@
 // src/components/StarRating.jsx
-import React, { useState } from "react";
-
-const Star = ({ fill }) => (
-  <svg
-    viewBox="0 0 24 24"
-    className={`w-6 h-6 ${fill ? "text-yellow-400" : "text-gray-600"}`}
-    fill="currentColor"
-  >
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
-  </svg>
-);
+import React from "react";
 
 export default function StarRating({ id, value = 0, onChange }) {
-  const [hoverValue, setHoverValue] = useState(null);
+  const groupName = `rating-${id}`;
+  
+  const isFull = (i) => value >= i + 1;
+  const isHalf = (i) => value > i && value < i + 1;
 
-  const displayValue = hoverValue ?? value;
-
-  const handleMove = (e) => {
+  const handleClick = (e, i) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const position = e.clientX - rect.left;
-    const starWidth = rect.width / 5;
-    let val = position / starWidth;
-    val = Math.min(Math.max(val, 0), 4.99); // bounds
-    const half = val % 1 < 0.5 ? 0.5 : 1;
-    const rating = Math.floor(val) + half;
-    setHoverValue(rating);
-  };
+    const clickX = e.clientX - rect.left;
+    const half = rect.width / 2;
 
-  const handleLeave = () => {
-    setHoverValue(null);
-  };
-
-  const handleClick = () => {
-    if (hoverValue) {
-      onChange?.(hoverValue);
+    if (clickX <= half) {
+      onChange(i + 0.5);
+    } else {
+      onChange(i + 1);
     }
   };
 
   return (
-    <div
-      className="flex items-center gap-1 cursor-pointer"
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      onClick={handleClick}
-      style={{ width: "150px" }} // 5 stars * 30px
-    >
-      {[0, 1, 2, 3, 4].map((i) => {
-        const starVal = i + 1;
-        const filled = displayValue >= starVal;
-        return <Star key={i} fill={filled} />;
-      })}
+    <div className="flex items-center gap-1 select-none">
+      {[0,1,2,3,4].map((i) => (
+        <div 
+          key={i}
+          className="relative w-6 h-6 cursor-pointer"
+          onClick={(e) => handleClick(e, i)}
+        >
+          {/* Outline star */}
+          <svg
+            viewBox="0 0 24 24"
+            className="absolute inset-0 text-gray-600 pointer-events-none"
+            fill="currentColor"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
 
-      {displayValue > 0 && (
-        <span className="ml-2 text-sm text-gray-400">{displayValue.toFixed(1)}</span>
-      )}
+          {/* Full star fill */}
+          {isFull(i) && (
+            <svg
+              viewBox="0 0 24 24"
+              className="absolute inset-0 text-yellow-400 pointer-events-none"
+              fill="currentColor"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+          )}
+
+          {/* Half star fill */}
+          {isHalf(i) && (
+            <svg
+              viewBox="0 0 24 24"
+              className="absolute inset-0 text-yellow-400 pointer-events-none"
+              fill="currentColor"
+              style={{ clipPath: "inset(0 50% 0 0)" }}
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
