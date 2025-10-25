@@ -8,17 +8,19 @@ export default function App() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
 
   const handleSelectAlbum = (albumId) => {
-    // Find album metadata
-    const albumMeta = bandData.albums.find((a) => a.id === albumId);
+    // 1) Find album metadata by id
+    const albumMeta = bandData.albums.find(a => a.id === albumId);
+    if (!albumMeta) {
+      console.error("Album meta not found for id:", albumId);
+      return;
+    }
 
-    // Find album tracks from tracks.js
-    const albumTracks = Object.values(tracks).find((t) => t.albumId === albumId);
+    // 2) Find tracks export that matches albumId
+    const match = Object.values(tracks).find(t => t.albumId === albumId);
+    const songs = match?.songs ?? [];
 
-    // Merge metadata and tracks
-    setSelectedAlbum({
-      ...albumMeta,
-      songs: albumTracks?.songs || [],
-    });
+    // 3) Set a NEW object — do not mutate albumMeta
+    setSelectedAlbum({ ...albumMeta, songs });
   };
 
   return (

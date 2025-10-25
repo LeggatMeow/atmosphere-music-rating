@@ -1,18 +1,23 @@
 import React from 'react';
 import SongRating from './SongRating';
 
-export default function SongList({ songs, onRateChange }) {
+const slug = (s) =>
+  String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+export default function SongList({ songs, albumId, onRateChange }) {
+  if (!songs?.length) return <p>No tracks available.</p>;
+
   return (
     <div className="space-y-3">
-      {songs.map((song, idx) => (
-        <div key={song.id} className="flex justify-between items-center bg-neutral-800 p-3 rounded-lg">
-          <div>
+      {songs.map((song, idx) => {
+        const safeId = song.id || `${albumId}-${slug(song.title)}-${idx}`;
+        return (
+          <div key={safeId} className="flex items-center justify-between p-2 bg-neutral-800 rounded">
             <p className="font-medium">{idx + 1}. {song.title}</p>
-            <p className="text-gray-400 text-sm">{song.duration}</p>
+            <SongRating song={{ ...song, id: safeId }} onRateChange={onRateChange} />
           </div>
-          <SongRating songId={song.id} onRateChange={onRateChange} />
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
