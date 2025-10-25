@@ -64,24 +64,6 @@ function AlbumCard({ album, onSelect }) {
 }
 
 
-  return (
-    <button
-      className="bg-neutral-800 p-4 rounded shadow hover:shadow-lg text-left w-full"
-      onClick={() => onSelect(album.id)}
-    >
-      {cover && (
-        <img
-          src={cover}
-          alt={album.title}
-          className="w-full h-48 object-cover rounded mb-2"
-        />
-      )}
-      <div className="font-bold">{album.title}</div>
-      <div className="text-gray-400">{album.year}</div>
-    </button>
-  );
-}
-
 function AlbumSection({ title, albums, onSelect }) {
   if (!albums?.length) return null;
 
