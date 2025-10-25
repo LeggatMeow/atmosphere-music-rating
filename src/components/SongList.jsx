@@ -5,7 +5,10 @@ import SongRating from './SongRating';
 const slug = (s) =>
   String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-export default function SongList({ songs, albumId, onRateChange, highlightedTrack }) {
+export default function SongList({ 
+  songs, albumId, onRateChange, highlightedTrack, onFavoriteChange 
+}) {
+
   if (!songs?.length) return <p>No tracks available.</p>;
 
   // ❤️ Favorites state
@@ -28,6 +31,9 @@ export default function SongList({ songs, albumId, onRateChange, highlightedTrac
 
     setFavorites(updated);
     localStorage.setItem("favorites", JSON.stringify(updated));
+
+    // Trigger album stats update
+    onFavoriteChange?.();
   };
 
   return (

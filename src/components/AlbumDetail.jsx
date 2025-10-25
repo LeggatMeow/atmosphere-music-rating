@@ -60,6 +60,7 @@ const calculateStats = () => {
   const { avg, count } = calculateStats();
   setAlbumAverage(avg);
   setRatedCount(count);
+  setFavoriteCount(favCount);
   setTopTracks(getTopRatedTracks()); // ✅ also update here
 }, [album?.id]);
 
@@ -68,6 +69,8 @@ const calculateStats = () => {
   const { avg, count } = calculateStats();
   setAlbumAverage(avg);
   setRatedCount(count);
+  setFavoriteCount(favCount);
+
   setTopTracks(getTopRatedTracks()); // ✅ live update
 };
 
@@ -115,6 +118,11 @@ const calculateStats = () => {
                 <p className="text-gray-400 text-sm">
                   Songs rated: {ratedCount}/{songs.length}
                 </p>
+                <p className="text-gray-400 text-sm flex items-center gap-1">
+                  <span className="text-red-400">♥</span>
+                    {favoriteCount}/{songs.length} favorited
+                </p>
+
               </>
             ) : (
               <p className="text-gray-400">No ratings yet</p>
@@ -180,7 +188,9 @@ const calculateStats = () => {
   albumId={album.id}
   onRateChange={handleRateChange}
   highlightedTrack={highlightedTrack}
+  onFavoriteChange={handleRateChange}
 />
+
 
       ) : (
         <p className="text-gray-400 italic mt-4">
