@@ -6,6 +6,8 @@ export default function AlbumDetail({ album, onBack }) {
   const [albumAverage, setAlbumAverage] = useState(null);
   const [ratedCount, setRatedCount] = useState(0);
   const [cover, setCover] = useState(null);
+  const [topTracks, setTopTracks] = useState([]);
+
   const songs = album?.songs ?? [];
 
 
@@ -26,10 +28,28 @@ export default function AlbumDetail({ album, onBack }) {
     return { avg, count };
   };
 
+  const getTopRatedTracks = () => {
+  const ratedSongs = songs
+    .map((song) => {
+      const saved = localStorage.getItem(`rating-${song.id}`);
+      return saved ? { ...song, rating: parseFloat(saved) } : null;
+    })
+    .filter((s) => s && s.rating > 0);
+
+  if (ratedSongs.length < 3) return [];
+
+  return ratedSongs
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 3);
+};
+
+
   useEffect(() => {
     const { avg, count } = calculateStats();
-    setAlbumAverage(avg);
-    setRatedCount(count);
+setAlbumAverage(avg);
+setRatedCount(count);
+setTopTracks(getTopRatedTracks());
+
   }, [album?.id]);
 
   const handleRateChange = () => {
@@ -93,6 +113,19 @@ export default function AlbumDetail({ album, onBack }) {
         </div>
       </div>
 
+{topTracks.length > 0 && (
+  <div className="mb-6">
+    <h3 className="text-lg font-bold text-yellow-400 mb-2">🔥 Top Rated Tracks</h3>
+    <ul className="space-y-1">
+      {topTracks.map((song, index) => (
+        <li key={song.id} className="flex justify-between">
+          <span>{index + 1}. {song.title}</span>
+          <span className="text-yellow-400">{song.rating.toFixed(1)} ⭐</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
       {album.type === "studio" ? (
         <SongList
           songs={songs}
