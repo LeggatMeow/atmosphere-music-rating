@@ -68,11 +68,12 @@ export default function AlbumDetail({ album, onBack }) {
         </div>
       </div>
 
-      {songs.length ? (
-        <SongList songs={songs} albumId={album.id} onRateChange={handleRateChange} />
-      ) : (
-        <p className="text-gray-400">No tracks available.</p>
-      )}
+      {album.type === "studio" ? (
+  <SongList songs={songs} albumId={album.id} onRateChange={handleRateChange} />
+) : (
+  <p className="text-gray-400 italic mt-4">Tracklist coming soon…</p>
+)}
+
     </div>
   );
 }
