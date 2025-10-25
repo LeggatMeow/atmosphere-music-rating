@@ -155,9 +155,9 @@ export default function AlbumDetail({ album, onBack }) {
         ))}
     </ul>
   </div>
-  <div className="border-b border-neutral-700/50 my-6"></div>
 )}
 
+<div className="border-b border-neutral-700/50 my-6"></div>  {/* ✅ Divider here */}
 
       {album.type === "studio" ? (
         <SongList
