@@ -1,5 +1,6 @@
 // src/components/SongList.jsx
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import SongRating from './SongRating';
 
 const slug = (s) =>
@@ -65,44 +66,44 @@ export default function SongList({
 
 
 
-      {songs
-  // ❤️ Filter favorites
-  .filter(song => !showFavoritesOnly || favorites.includes(song.id))
+      <AnimatePresence>
+  {songs
+    .filter(song => !showFavoritesOnly || favorites.includes(song.id))
+    .sort((a, b) => {
+      if (sortMode === "rating") {
+        const getRating = (s) => {
+          const saved = localStorage.getItem(`rating-${s.id}`);
+          return saved ? parseFloat(saved) : 0;
+        };
+        return getRating(b) - getRating(a);
+      }
+      return 0;
+    })
+    .map((song, idx) => {
+      const safeId = song.id || `${albumId}-${slug(song.title)}-${idx}`;
+      const isFav = favorites.includes(safeId);
+      const isHighlighted = highlightedTrack === safeId;
 
-  // ⭐ Sort by rating if selected
-  .sort((a, b) => {
-    if (sortMode === "rating") {
-      const getRating = (s) => {
-        const saved = localStorage.getItem(`rating-${s.id}`);
-        return saved ? parseFloat(saved) : 0;
-      };
-      return getRating(b) - getRating(a);
-    }
-    return 0; // Album order (default)
-  })
-
-  .map((song, idx) => {
-
-          const safeId = song.id || `${albumId}-${slug(song.title)}-${idx}`;
-          const isFav = favorites.includes(safeId);
-          const isHighlighted = highlightedTrack === safeId;
-
-          return (
-            <div
-              key={safeId}
-              id={safeId}
-              className={`song-row flex items-center justify-between p-2 rounded
-  transition-all duration-500 ease-in-out transform
-  ${isHighlighted ? "bg-yellow-500/20 scale-[1.02]" : "bg-neutral-800 scale-100"}`}
-  style={{
-  opacity: isHighlighted ? 1 : 1,
-}}
-style={{
-  transitionDelay: `${idx * 40}ms`,
-}}
+      return (
+        <motion.div
+          key={safeId}
+          id={safeId}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.35 }}
+          className={`flex items-center justify-between p-2 rounded
+            transition-colors duration-500
+            ${isHighlighted ? "bg-yellow-500/20" : "bg-neutral-800"}`}
+        >
+          ...
+        </motion.div>
+      );
+    })}
+</AnimatePresence>
 
 
-            >
               <p className="font-medium">{idx + 1}. {song.title}</p>
 
               <div className="flex items-center gap-3">
