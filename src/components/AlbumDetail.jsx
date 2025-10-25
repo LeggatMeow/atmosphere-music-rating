@@ -45,18 +45,20 @@ export default function AlbumDetail({ album, onBack }) {
 
 
   useEffect(() => {
-    const { avg, count } = calculateStats();
-setAlbumAverage(avg);
-setRatedCount(count);
-setTopTracks(getTopRatedTracks());
+  const { avg, count } = calculateStats();
+  setAlbumAverage(avg);
+  setRatedCount(count);
+  setTopTracks(getTopRatedTracks()); // ✅ also update here
+}, [album?.id]);
 
-  }, [album?.id]);
 
   const handleRateChange = () => {
-    const { avg, count } = calculateStats();
-    setAlbumAverage(avg);
-    setRatedCount(count);
-  };
+  const { avg, count } = calculateStats();
+  setAlbumAverage(avg);
+  setRatedCount(count);
+  setTopTracks(getTopRatedTracks()); // ✅ live update
+};
+
 
   useEffect(() => {
     let cancelled = false;
