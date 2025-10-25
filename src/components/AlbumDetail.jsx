@@ -66,10 +66,12 @@ const calculateStats = () => {
 
 
   const handleRateChange = () => {
-  const { avg, count } = calculateStats();
-  setAlbumAverage(avg);
-  setRatedCount(count);
-  setFavoriteCount(favCount);
+const { avg, count, favCount } = calculateStats();
+setAlbumAverage(avg);
+setRatedCount(count);
+setFavoriteCount(favCount);
+
+
 
   setTopTracks(getTopRatedTracks()); // ✅ live update
 };
