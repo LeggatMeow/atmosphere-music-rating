@@ -9,28 +9,36 @@ export default function AlbumDetail({ album, onBack }) {
   const [topTracks, setTopTracks] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [highlightedTrack, setHighlightedTrack] = useState(null);
+  const [favoriteCount, setFavoriteCount] = useState(0);
+
 
 
 
   const songs = album?.songs ?? [];
 
 
-  const calculateStats = () => {
-    const ratings = songs.map((song) => {
-      const saved = localStorage.getItem(`rating-${song.id}`);
-      return saved ? parseFloat(saved) : 0;
-    });
+const calculateStats = () => {
+  const ratings = songs.map((song) => {
+    const saved = localStorage.getItem(`rating-${song.id}`);
+    return saved ? parseFloat(saved) : 0;
+  });
 
-    const nonZero = ratings.filter((r) => r > 0);
-    const count = nonZero.length;
+  const nonZero = ratings.filter((r) => r > 0);
+  const count = nonZero.length;
+  const avg =
+    count > 0
+      ? (nonZero.reduce((a, b) => a + b, 0) / count).toFixed(2)
+      : null;
 
-    const avg =
-      count > 0
-        ? (nonZero.reduce((a, b) => a + b, 0) / count).toFixed(2)
-        : null;
+  // ❤️ Count favorites
+  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+  const favCount = songs.filter((s) =>
+    favorites.includes(s.id)
+  ).length;
 
-    return { avg, count };
-  };
+  return { avg, count, favCount };
+};
+
 
   const getTopRatedTracks = () => {
   const ratedSongs = songs
