@@ -1,0 +1,351 @@
+export const overcastTracks = {
+  albumId: "overcast",
+  title: "Overcast!",
+  year: 1997,
+  songs: [
+    { title: "1597" },
+    { title: "Brief Description" },
+    { title: "Current Status" },
+    { title: "Complications" },
+    { title: "4:30 A.M." },
+    { title: "Adjust" },
+    { title: "Clay" },
+    { title: "@ It Again" },
+    { title: "WND" },
+    { title: "Multiples" },
+    { title: "Scapegoat" },
+    { title: "Ode to the Modern Man" },
+    { title: "WND Pt. 2" },
+    { title: "Caved In" },
+    { title: "Ear Blister" },
+    { title: "17 ft. Ceiling" },
+    { title: "The Outernet" },
+    { title: "Broken Rewind Button" },
+    { title: "The Abusing of the Rib" },
+    { title: "Sound Is Vibration" },
+  ],
+};
+
+export const godLovesUglyTracks = {
+  albumId: "god-loves-ugly",
+  title: "God Loves Ugly",
+  year: 2002,
+  songs: [
+    { title: "Onemosphere" },
+    { title: "The Bass and the Movement" },
+    { title: "Give Me" },
+    { title: "F*@k You Lucy" },
+    { title: "Hair" },
+    { title: "GodLovesUgly" },
+    { title: "A Song About a Friend" },
+    { title: "Flesh" },
+    { title: "Saves the Day" },
+    { title: "Lovelife" },
+    { title: "Breathing" },
+    { title: "Vampires" },
+    { title: "A Girl Named Hope" },
+    { title: "GodLovesUgly Reprise" },
+    { title: "Modern Man's Hustle" },
+    { title: "One of a Kind" },
+    { title: "Blamegame" },
+    { title: "Shrapnel" },
+  ],
+};
+
+export const sevensTravelsTracks = {
+  albumId: "sevens-travels",
+  title: "Seven's Travels",
+  year: 2003,
+  songs: [
+    { title: "History" },
+    { title: "Trying to Find a Balance" },
+    { title: "Bird Sings Why the Caged I Know" },
+    { title: "Reflections" },
+    { title: "Gotta Lotta Walls" },
+    { title: "The Keys to Life vs. 15 Minutes of Fame" },
+    { title: "Apple" },
+    { title: "Suicidegirls" },
+    { title: "Jason" },
+    { title: "Cats Van Bags (featuring Brother Ali)" },
+    { title: "Los Angeles" },
+    { title: "Lifter Puller" },
+    { title: "Shoes" },
+    { title: "National Disgrace" },
+    { title: "Denvemolorado" },
+    { title: "Liquor Lyles Cool July" },
+    { title: "Good Times (Sick Pimpin')" },
+    { title: "In My Continental" },
+    { title: "Always Coming Back Home to You" },
+    { title: "Say Shh..." }, // Hidden track
+  ],
+};
+
+export const youCantImagineTracks = {
+  albumId: "you-cant-imagine-how-much-fun-were-having",
+  title: "You Can't Imagine How Much Fun We're Having",
+  year: 2005,
+  songs: [
+    { title: "The Arrival" },
+    { title: "Panic Attack" },
+    { title: "Watch Out" },
+    { title: "Musical Chairs" },
+    { title: "Say Hey There" },
+    { title: "Hockey Hair" },
+    { title: "Bam" },
+    { title: "Pour Me Another" },
+    { title: "Smart Went Crazy" },
+    { title: "Angelface" },
+    { title: "That Night" },
+    { title: "Get Fly" },
+    { title: "Little Man" },
+  ],
+};
+
+export const whenLifeGivesYouLemonsTracks = {
+  albumId: "when-life-gives-you-lemons",
+  title: "When Life Gives You Lemons, You Paint That Shit Gold",
+  year: 2008,
+  songs: [
+    { title: "Like the Rest of Us" },
+    { title: "Puppets" },
+    { title: "The Skinny" },
+    { title: "Dreamer" },
+    { title: "Shoulda Known" },
+    { title: "You" },
+    { title: "Painting" },
+    { title: "Your Glasshouse" },
+    { title: "Yesterday" },
+    { title: "Guarantees" },
+    { title: "Me" },
+    { title: "Wild Wild Horses" },
+    { title: "Can't Break" },
+    { title: "The Waitress" },
+    { title: "In Her Music Box" },
+  ],
+};
+
+export const theFamilySignTracks = {
+  albumId: "the-family-sign",
+  title: "The Family Sign",
+  year: 2011,
+  songs: [
+    { title: "My Key" },
+    { title: "The Last to Say" },
+    { title: "Became" },
+    { title: "Just for Show" },
+    { title: "She's Enough" },
+    { title: "Bad Bad Daddy" },
+    { title: "Millennium Dodo" },
+    { title: "Who I'll Never Be" },
+    { title: "I Don't Need Brighter Days" },
+    { title: "Ain't Nobody" },
+    { title: "Your Name Here" },
+    { title: "If You Can Save Me Now" },
+    { title: "Something So" },
+    { title: "My Notes" },
+    { title: "Millennium Dodo 2" }, // iTunes deluxe edition bonus track
+    { title: "Cut You Down" },     // iTunes deluxe edition bonus track
+  ],
+};
+
+export const southsidersTracks = {
+  albumId: "southsiders",
+  title: "Southsiders",
+  year: 2014,
+  songs: [
+    { title: "Camera Thief" },
+    { title: "Arthur's Song" },
+    { title: "The World Might Not Live Through the Night" },
+    { title: "Star-Shaped Heart" },
+    { title: "I Love You Like a Brother" },
+    { title: "Southsiders" },
+    { title: "Bitter" },
+    { title: "Mrs. Interpret" },
+    { title: "Fortunate" },
+    { title: "Kanye West" },
+    { title: "We Ain't Gonna Die Today" },
+    { title: "My Lady Got Two Men" },
+    { title: "Flicker" },
+    { title: "January on Lake Street" },
+    { title: "Let Me Know That You Know What You Want to Know" },
+  ],
+};
+
+export const fishingBluesTracks = {
+  albumId: "fishing-blues",
+  title: "Fishing Blues",
+  year: 2016,
+  songs: [
+    { title: "Like a Fire" },
+    { title: "Ringo" },
+    { title: "Besos" },
+    { title: "Pure Evil (featuring I.B.E)" },
+    { title: "Perfect" },
+    { title: "Seismic Waves (featuring Eric Mayson)" },
+    { title: "Next to You (featuring Dem Atlas)" },
+    { title: "The Shit That We've Been Through" },
+    { title: "When the Lights Go Out (featuring MF Doom and Kool Keith)" },
+    { title: "No Biggie" },
+    { title: "Everything" },
+    { title: "Chasing New York (featuring Aesop Rock)" },
+    { title: "Sugar" },
+    { title: "Fishing Blues (featuring The Grouch)" },
+    { title: "Won't Look Back (featuring Kim Manning)" },
+    { title: "Anybody That I've Known" },
+    { title: "Still Be Here" },
+    { title: "A Long Hello" },
+  ],
+};
+
+export const miVidaLocalTracks = {
+  albumId: "mi-vida-local",
+  title: "Mi Vida Local",
+  year: 2018,
+  songs: [
+    { title: "Jerome" },
+    { title: "Stopwatch" },
+    { title: "Virgo" },
+    { title: "Delicate" },
+    { title: "Drown (featuring Cashinova, The Lioness and Dem Atlas)" },
+    { title: "Anymore" },
+    { title: "Earring (featuring Musab)" },
+    { title: "Trim" },
+    { title: "Specificity" },
+    { title: "Mijo" },
+    { title: "Randy Mosh (featuring The Dynospectrum)" },
+    { title: "Graffiti" },
+  ],
+};
+
+
+export const wheneverTracks = {
+  albumId: "whenever",
+  title: "Whenever",
+  year: 2019,
+  songs: [
+    { title: "Bde Maka Ska" },
+    { title: "Push Play" },
+    { title: "Postal Lady" },
+    { title: "Love Each Other" },
+    { title: "Romance" },
+    { title: "Dearly Beloved (featuring Musab and Muja Messiah)" },
+    { title: "The Hands of Time" },
+    { title: "Whenever (featuring Murs, Haphduzn and Gifted Gab)" },
+    { title: "Lovely (featuring Nikki Jean)" },
+    { title: "Son of Abyss" },
+    { title: "You're Gonna Go" },
+    { title: "The Ceiling" },
+  ],
+};
+
+
+export const theDayBeforeHalloweenTracks = {
+  albumId: "the-day-before-halloween",
+  title: "The Day Before Halloween",
+  year: 2020,
+  songs: [
+    { title: "Where the Road Forks" },
+    { title: "Space Is Safe" },
+    { title: "She Loves My Not" },
+    { title: "The New People" },
+    { title: "The Future Is Disgusting" },
+    { title: "DoubleTown" },
+    { title: "Stardust" },
+    { title: "Blotter Acid Reflux Syndrome" },
+    { title: "Party Crashers" },
+    { title: "Sleep Apnea" },
+  ],
+};
+
+
+export const wordTracks = {
+  albumId: "word",
+  title: "Word?",
+  year: 2021,
+  songs: [
+    { title: "Fleetwood" },
+    { title: "Something" },
+    { title: "Crumbs (feat. Evidence & Muja Messiah)" },
+    { title: "Woes" },
+    { title: "Strung (feat. Musab)" },
+    { title: "Clocked" },
+    { title: "Sleepless (feat. Nino Bless)" },
+    { title: "Distances" },
+    { title: "Carousel (feat. Nikki Jean)" },
+    { title: "Vanish" },
+    { title: "Pressed (feat. Anwar HighSign, BlackLiq, Sa-Roc, Haphduzn, and Lateef The Truthspeaker)" },
+    { title: "Skull" },
+    { title: "Nekst" },
+    { title: "Barcade (feat. Aesop Rock & MF DOOM)" },
+  ],
+};
+
+
+export const soManyOtherRealitiesTracks = {
+  albumId: "so-many-other-realities-exist-simultaneously",
+  title: "So Many Other Realities Exist Simultaneously",
+  year: 2023,
+  songs: [
+    { title: "Okay" },
+    { title: "Eventide" },
+    { title: "Sterling" },
+    { title: "Dotted Lines" },
+    { title: "In My Head" },
+    { title: "Crop Circles" },
+    { title: "Portrait" },
+    { title: "It Happened Last Morning" },
+    { title: "Thanxiety" },
+    { title: "September Fools' Day" },
+    { title: "Talk Talk" },
+    { title: "Watercolors" },
+    { title: "Holding My Breath" },
+    { title: "Still Life" },
+    { title: "After Tears" },
+    { title: "Positive Space" },
+    { title: "Bigger Pictures" },
+    { title: "Truth & Nail" },
+    { title: "Sculpting With Fire" },
+    { title: "Alright (Okay Reprise)" },
+  ],
+};
+
+export const jesturesTracks = {
+  albumId: "jestures",
+  title: "Jestures",
+  year: 2025,
+  songs: [
+    { title: "Asshole" },
+    { title: "Baby" },
+    { title: "Caddy" },
+    { title: "Daley" },
+    { title: "Effortless (feat. Evidence)" },
+    { title: "Furthermore" },
+    { title: "Grateful" },
+    { title: "Heavy Lifting (feat. Haphduzn)" },
+    { title: "Instrument" },
+    { title: "Jester" },
+    { title: "Kilowatts (feat. Kurious)" },
+    { title: "Locusts" },
+    { title: "Mash (feat. Mike the Martyr, Musab, and Muja Messiah)" },
+    { title: "Neptune" },
+    { title: "Ophidiophobia" },
+    { title: "Past" },
+    { title: "Quicksand" },
+    { title: "Really" },
+    { title: "Sean" },
+    { title: "Trying" },
+    { title: "Used To" },
+    { title: "Velour" },
+    { title: "Westbound" },
+    { title: "XXX" },
+    { title: "Yearning (feat. Yoni Wolf of WHY?)" },
+    { title: "Zorro (feat. ZooDeVille)" },
+  ],
+};
+
+
+
+
+
+
+
