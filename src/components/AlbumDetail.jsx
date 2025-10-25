@@ -7,6 +7,8 @@ export default function AlbumDetail({ album, onBack }) {
   const [ratedCount, setRatedCount] = useState(0);
   const [cover, setCover] = useState(null);
   const [topTracks, setTopTracks] = useState([]);
+  const [expanded, setExpanded] = useState(false);
+
 
   const songs = album?.songs ?? [];
 
@@ -117,17 +119,41 @@ export default function AlbumDetail({ album, onBack }) {
 
 {topTracks.length > 0 && (
   <div className="mb-6">
-    <h3 className="text-lg font-bold text-yellow-400 mb-2">🔥 Top Rated Tracks</h3>
-    <ul className="space-y-1">
-      {topTracks.map((song, index) => (
-        <li key={song.id} className="flex justify-between">
-          <span>{index + 1}. {song.title}</span>
-          <span className="text-yellow-400">{song.rating.toFixed(1)} ⭐</span>
-        </li>
-      ))}
+    <div className="flex items-center gap-2">
+      <h3 className="text-lg font-bold text-yellow-400">🔥 Top Rated Tracks</h3>
+      {topTracks.length > 3 && (
+        <button
+          className="text-xs text-gray-400 underline"
+          onClick={() => setExpanded((prev) => !prev)}
+        >
+          {expanded ? "Show Less" : "Show All"}
+        </button>
+      )}
+    </div>
+
+    <ul className="space-y-1 mt-2">
+      {topTracks
+        .slice(0, expanded ? topTracks.length : 3)
+        .map((song, index) => (
+          <li
+            key={song.id}
+            onClick={() => {
+              const el = document.getElementById(song.id);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+            className="flex justify-between items-center bg-neutral-800 p-2 rounded cursor-pointer hover:bg-neutral-700 transition-all duration-200"
+            style={{ transition: "all 0.3s ease" }}
+          >
+            <span>
+              {index + 1}. {song.title}
+            </span>
+            <span className="text-yellow-400">{song.rating.toFixed(1)} ⭐</span>
+          </li>
+        ))}
     </ul>
   </div>
 )}
+
       {album.type === "studio" ? (
         <SongList
           songs={songs}
