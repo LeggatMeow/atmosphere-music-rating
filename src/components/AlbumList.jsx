@@ -10,6 +10,9 @@ function getRatingColor(avg) {
 
 function AlbumCard({ album, onSelect }) {
   const [cover, setCover] = useState(null);
+  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+  const favoriteCount = songs.filter((s) => favorites.includes(s.id)).length;
+
 
   useEffect(() => {
     let cancelled = false;
@@ -52,16 +55,28 @@ function AlbumCard({ album, onSelect }) {
         )}
 
         {/* Overlay animated in only if avg exists */}
-        {avg && (
-          <div className={`absolute bottom-0 left-0 w-full bg-black/60 text-sm p-1 
-            flex items-center gap-1 justify-center 
-            ${getRatingColor(avg)}
-            transition-opacity duration-500
-            opacity-100`}
-          >
-            {avg} ⭐
-          </div>
-        )}
+        {(avg || ratedCount > 0) && (
+  <div
+    className={`absolute bottom-0 left-0 w-full bg-black/60 text-sm py-1 px-2
+    flex items-center gap-3 justify-center transition-opacity duration-500 opacity-100`}
+  >
+    {/* ⭐ Album Rating */}
+    {avg && (
+      <span className={`${getRatingColor(avg)} flex items-center gap-1`}>
+        {avg}
+        <span>⭐</span>
+      </span>
+    )}
+
+    {/* ❤️ Favorite Count */}
+    {favoriteCount > 0 && (
+      <span className="text-red-400 flex items-center gap-1">
+        <span>♥</span> {favoriteCount}
+      </span>
+    )}
+  </div>
+)}
+
       </div>
 
       <div className="font-bold">{album.title}</div>
