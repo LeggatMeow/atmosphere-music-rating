@@ -15,6 +15,9 @@ export default function SongList({
   const [favorites, setFavorites] = useState([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
+  const [sortMode, setSortMode] = useState("album");
+
+
   // Load favorites on mount
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -49,9 +52,37 @@ export default function SongList({
         </button>
       </div>
 
+      {/* ⭐ Sort Toggle */}
+<div className="flex justify-end mb-2">
+  <button
+    onClick={() => setSortMode(prev => prev === "album" ? "rating" : "album")}
+    className="text-sm text-gray-400 hover:text-yellow-400 transition"
+  >
+    {sortMode === "album" ? "Sort by Rating ⭐" : "Sort by Album Order"}
+  </button>
+</div>
+
+
+
+
       {songs
-        .filter((song) => !showFavoritesOnly || favorites.includes(song.id))
-        .map((song, idx) => {
+  // ❤️ Filter favorites
+  .filter(song => !showFavoritesOnly || favorites.includes(song.id))
+
+  // ⭐ Sort by rating if selected
+  .sort((a, b) => {
+    if (sortMode === "rating") {
+      const getRating = (s) => {
+        const saved = localStorage.getItem(`rating-${s.id}`);
+        return saved ? parseFloat(saved) : 0;
+      };
+      return getRating(b) - getRating(a);
+    }
+    return 0; // Album order (default)
+  })
+
+  .map((song, idx) => {
+
           const safeId = song.id || `${albumId}-${slug(song.title)}-${idx}`;
           const isFav = favorites.includes(safeId);
           const isHighlighted = highlightedTrack === safeId;
