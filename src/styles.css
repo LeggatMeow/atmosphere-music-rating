@@ -5,4 +5,9 @@
 /* Custom tweaks */
 body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 
+.song-row {
+  transition: transform 0.35s ease, opacity 0.2s ease;
+}
+
+
 /* Make svg gradients use current color where fallback needed */

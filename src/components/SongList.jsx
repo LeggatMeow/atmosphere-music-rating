@@ -91,8 +91,17 @@ export default function SongList({
             <div
               key={safeId}
               id={safeId}
-              className={`flex items-center justify-between p-2 rounded transition-colors duration-500
-                ${isHighlighted ? "bg-yellow-500/20" : "bg-neutral-800"}`}
+              className={`song-row flex items-center justify-between p-2 rounded
+  transition-all duration-500 ease-in-out transform
+  ${isHighlighted ? "bg-yellow-500/20 scale-[1.02]" : "bg-neutral-800 scale-100"}`}
+  style={{
+  opacity: isHighlighted ? 1 : 1,
+}}
+style={{
+  transitionDelay: `${idx * 40}ms`,
+}}
+
+
             >
               <p className="font-medium">{idx + 1}. {song.title}</p>
 
