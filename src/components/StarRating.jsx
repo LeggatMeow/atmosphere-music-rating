@@ -2,85 +2,72 @@
 import React from "react";
 
 /**
- * Shows 5 stars, but each star supports half-step ratings (0.5 increments).
- * Example: 3.5 stars selects half of the 4th star.
+ * Displays 5 stars, each supporting full & half selection.
+ * Example: 3.5 stars → 3 full stars + 1 half-filled star
  */
 export default function StarRating({ id, value = 0, onChange }) {
-  const groupName = `rating-group-${id}`;
+  const groupName = `rating-${id}`;
 
-  /**
-   * Array of 5 stars. For each star index i (0-4):
-   *  - first click: i + 0.5
-   *  - second click: i + 1.0
-   */
-  const stars = [0, 1, 2, 3, 4];
-
-  // Helper: determine if star should appear filled
-  const isFilled = (starIndex) => value >= starIndex + 1;
-
-  // If value = 3.5 -> halfStarIndex = 3 (0-based for the 4th star)
-  const halfStarIndex = value % 1 !== 0 ? Math.floor(value) : null;
+  // Determine highlight state
+  const isFull = (i) => value >= i + 1;
+  const isHalf = (i) => value > i && value < i + 1;
 
   return (
-    <div className="flex items-center gap-1" aria-label="Star rating">
-      {stars.map((i) => {
-        const halfVal = i + 0.5;
-        const fullVal = i + 1;
+    <div className="flex items-center gap-1">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <div key={i} className="relative w-6 h-6 cursor-pointer">
+          
+          {/* Invisible half button */}
+          <input
+            type="radio"
+            name={groupName}
+            id={`${groupName}-half-${i}`}
+            className="absolute left-0 w-1/2 h-full opacity-0 cursor-pointer"
+            onChange={() => onChange(i + 0.5)}
+          />
 
-        return (
-          <div key={`${groupName}-${i}`} className="flex items-center gap-0.5">
-            {/* HALF STAR click */}
-            <label
-              title={`${halfVal} stars`}
-              className="cursor-pointer"
-              style={{ lineHeight: 1 }}
+          {/* Invisible full button */}
+          <input
+            type="radio"
+            name={groupName}
+            id={`${groupName}-full-${i}`}
+            className="absolute right-0 w-1/2 h-full opacity-0 cursor-pointer"
+            onChange={() => onChange(i + 1)}
+          />
+
+          {/* Base star outline */}
+          <svg
+            viewBox="0 0 24 24"
+            className="absolute inset-0 text-gray-600"
+            fill="currentColor"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
+
+          {/* Full fill overlay */}
+          {isFull(i) && (
+            <svg
+              viewBox="0 0 24 24"
+              className="absolute inset-0 text-yellow-400"
+              fill="currentColor"
             >
-              <input
-                type="radio"
-                name={groupName}
-                className="hidden"
-                value={halfVal}
-                checked={value === halfVal}
-                onChange={() => onChange(halfVal)}
-              />
-              <span
-                className={`text-xl ${
-                  halfStarIndex === i || value > i ? "text-yellow-400" : "text-gray-500"
-                }`}
-              >
-                {halfStarIndex === i ? "★" : "✩"}
-              </span>
-            </label>
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+          )}
 
-            {/* FULL STAR click */}
-            <label
-              title={`${fullVal} stars`}
-              className="cursor-pointer"
-              style={{ lineHeight: 1 }}
+          {/* Half fill overlay */}
+          {isHalf(i) && (
+            <svg
+              viewBox="0 0 24 24"
+              className="absolute inset-0 text-yellow-400"
+              fill="currentColor"
+              style={{ clipPath: "inset(0 50% 0 0)" }}
             >
-              <input
-                type="radio"
-                name={groupName}
-                className="hidden"
-                value={fullVal}
-                checked={value === fullVal}
-                onChange={() => onChange(fullVal)}
-              />
-              <span
-                className={`text-xl ${
-                  isFilled(i) ? "text-yellow-400" : "text-gray-500"
-                }`}
-              >
-                ★
-              </span>
-            </label>
-          </div>
-        );
-      })}
-
-      {value > 0 && (
-        <span className="ml-2 text-sm text-gray-400">{value.toFixed(1)}</span>
-      )}
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.54 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
