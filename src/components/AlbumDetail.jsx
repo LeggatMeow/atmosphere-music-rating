@@ -57,7 +57,7 @@ const calculateStats = () => {
 
 
   useEffect(() => {
-  const { avg, count } = calculateStats();
+  const { avg, count, favCount } = calculateStats();
   setAlbumAverage(avg);
   setRatedCount(count);
   setFavoriteCount(favCount);
