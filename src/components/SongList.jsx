@@ -4,7 +4,7 @@ import SongRating from './SongRating';
 const slug = (s) =>
   String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-export default function SongList({ songs, albumId, onRateChange }) {
+export default function SongList({ songs, albumId, onRateChange, highlightedTrack }) {
   if (!songs?.length) return <p>No tracks available.</p>;
 
   return (
