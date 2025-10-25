@@ -8,6 +8,8 @@ export default function AlbumDetail({ album, onBack }) {
   const [cover, setCover] = useState(null);
   const [topTracks, setTopTracks] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const [highlightedTrack, setHighlightedTrack] = useState(null);
+
 
 
   const songs = album?.songs ?? [];
@@ -83,7 +85,7 @@ export default function AlbumDetail({ album, onBack }) {
         ← Back
       </button>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sticky top-0 bg-neutral-900/90 backdrop-blur-sm pb-4 z-20">
         {cover && (
           <img
             src={cover}
@@ -141,7 +143,12 @@ export default function AlbumDetail({ album, onBack }) {
             key={song.id}
             onClick={() => {
               const el = document.getElementById(song.id);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "center"});
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+              setHighlightedTrack(song.id);
+              setTimeout(() => setHighlightedTrack(null), 1500);
+}
+
             }}
             className="flex justify-between items-center bg-neutral-800 p-2 rounded cursor-pointer hover:bg-neutral-700 transition-all duration-200"
           >
@@ -161,10 +168,12 @@ export default function AlbumDetail({ album, onBack }) {
 
       {album.type === "studio" ? (
         <SongList
-          songs={songs}
-          albumId={album.id}
-          onRateChange={handleRateChange}
-        />
+  songs={songs}
+  albumId={album.id}
+  onRateChange={handleRateChange}
+  highlightedTrack={highlightedTrack}
+/>
+
       ) : (
         <p className="text-gray-400 italic mt-4">
           Tracklist coming soon…
