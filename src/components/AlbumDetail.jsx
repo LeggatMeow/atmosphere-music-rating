@@ -71,9 +71,21 @@ const handleRateChange = () => {
         <div>
           <h2 className="text-2xl font-bold">{album.title}</h2>
           <p className="text-gray-400 mb-1">{album.year}</p>
-          <p className="text-yellow-400 font-semibold mb-4">
-            {albumAverage ? `Album Avg: ${albumAverage} ⭐` : "No ratings yet"}
-          </p>
+          <div className="mb-4">
+  {albumAverage ? (
+    <>
+      <p className="text-yellow-400 font-semibold">
+        Album Avg: {albumAverage} ⭐
+      </p>
+      <p className="text-gray-400 text-sm">
+        Songs rated: {ratedCount}/{songs.length}
+      </p>
+    </>
+  ) : (
+    <p className="text-gray-400">No ratings yet</p>
+  )}
+</div>
+
           <p className="text-gray-300 max-w-xl">
             Album tracklist — rate songs with 1–5 stars (half stars supported).
           </p>
