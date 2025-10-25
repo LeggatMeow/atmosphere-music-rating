@@ -3,6 +3,13 @@ import SongList from "./SongList";
 import { fetchAlbumArt } from "../utils/fetchAlbumArt";
 
 export default function AlbumDetail({ album, onBack }) {
+  console.log("AlbumDetail received:", {
+  id: album?.id,
+  title: album?.title,
+  songs: album?.songs,
+  songsCount: album?.songs?.length
+});
+
   const [albumAverage, setAlbumAverage] = useState(null);
   const [cover, setCover] = useState(null);
 
