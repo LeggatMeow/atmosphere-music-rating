@@ -26,10 +26,17 @@ export default function StarRating({ id, value = 0, onChange }) {
   };
 
   const handleClick = (e) => {
-    const rating = calcRatingFromEvent(e);
-    onChange?.(rating);
-    setHoverValue(null);
-  };
+  const newRating = calcRatingFromEvent(e);
+
+  // If clicking the same rating -> clear
+  if (value === newRating) {
+    onChange?.(0);
+  } else {
+    onChange?.(newRating);
+  }
+
+  setHoverValue(null);
+};
 
   const handleLeave = () => setHoverValue(null);
 
