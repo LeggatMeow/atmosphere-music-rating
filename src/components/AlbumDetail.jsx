@@ -197,6 +197,18 @@ export default function AlbumDetail({ album, onBack }) {
       Spotify
     </a>
   )}
+
+  {albumLinks.youtube && (
+  <a
+    href={albumLinks.youtube}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="..."
+  >
+    YouTube 🎵
+  </a>
+)}
+
 </div>
 
 
