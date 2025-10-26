@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import SongList from "./SongList";
 import { fetchAlbumArt } from "../utils/fetchAlbumArt";
 import { fetchWikiSummary } from "../utils/fetchWikiSummary";
+import { fetchAlbumLinks } from "../utils/fetchAlbumLinks";
+
+
 
 export default function AlbumDetail({ album, onBack }) {
   const [albumAverage, setAlbumAverage] = useState(null);
@@ -18,6 +21,9 @@ export default function AlbumDetail({ album, onBack }) {
   const [topTracks, setTopTracks] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [highlightedTrack, setHighlightedTrack] = useState(null);
+
+  const [albumLinks, setAlbumLinks] = useState({});
+
 
   const songs = album?.songs ?? [];
 
@@ -72,50 +78,61 @@ export default function AlbumDetail({ album, onBack }) {
 
   // ---- Cover + Wikipedia blurb fetch ---------------------------------------
   useEffect(() => {
-    let cancelled = false;
+  let cancelled = false;
 
-    // reset between albums for nicer UX
-    setCover(null);
-    setAlbumBlurb("");
-    setWikiUrl("");
-    setLoadingBlurb(true);
+  // Reset when album changes
+  setCover(null);
+  setAlbumBlurb("");
+  setWikiUrl("");
+  setAlbumLinks({});
+  setLoadingBlurb(true);
 
-    // Cover
-    (async () => {
-      try {
-        const url = await fetchAlbumArt(album.title, "Atmosphere");
-        if (!cancelled) setCover(url || null);
-      } catch (e) {
-        console.warn("Detail cover fetch failed for", album.title, e);
-        if (!cancelled) setCover(null);
+  // Cover fetch
+  (async () => {
+    try {
+      const url = await fetchAlbumArt(album.title, "Atmosphere");
+      if (!cancelled) setCover(url || null);
+    } catch (e) {
+      console.warn("Cover fetch failed", e);
+      if (!cancelled) setCover(null);
+    }
+  })();
+
+  //  Wikipedia blurb fetch
+  (async () => {
+    try {
+      const { summary, url } = await fetchWikiSummary(
+        `${album.title} Atmosphere album`
+      );
+      if (!cancelled) {
+        setAlbumBlurb(summary || "");
+        setWikiUrl(url || "");
       }
-    })();
-
-    // Blurb
-    (async () => {
-      try {
-        const { summary, url } = await fetchWikiSummary(
-          `${album.title} Atmosphere album`
-        );
-        if (!cancelled) {
-          setAlbumBlurb(summary || "");
-          setWikiUrl(url || "");
-        }
-      } catch (e) {
-        console.warn("Wiki blurb failed for", album.title, e);
-        if (!cancelled) {
-          setAlbumBlurb("");
-          setWikiUrl("");
-        }
-      } finally {
-        if (!cancelled) setLoadingBlurb(false);
+    } catch {
+      if (!cancelled) {
+        setAlbumBlurb("");
+        setWikiUrl("");
       }
-    })();
+    } finally {
+      if (!cancelled) setLoadingBlurb(false);
+    }
+  })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [album.title]);
+  // Streaming links fetch
+  (async () => {
+    try {
+      const links = await fetchAlbumLinks(album.title, "Atmosphere");
+      if (!cancelled) setAlbumLinks(links);
+    } catch {
+      if (!cancelled) setAlbumLinks({});
+    }
+  })();
+
+  return () => {
+    cancelled = true;
+  };
+}, [album.title]);
+
 
   // ---- Render ---------------------------------------------------------------
   return (
@@ -157,6 +174,31 @@ export default function AlbumDetail({ album, onBack }) {
               <p className="text-gray-400">No ratings yet</p>
             )}
           </div>
+
+          <div className="flex gap-2 mt-2 mb-4">
+  {albumLinks.apple && (
+    <a
+      href={albumLinks.apple}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-xs px-3 py-1 rounded bg-green-600 hover:bg-green-500 transition-colors"
+    >
+       Music
+    </a>
+  )}
+
+  {albumLinks.spotify && (
+    <a
+      href={albumLinks.spotify}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-xs px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 transition-colors"
+    >
+      Spotify
+    </a>
+  )}
+</div>
+
 
           {/* Blurb + link */}
           {loadingBlurb ? (
