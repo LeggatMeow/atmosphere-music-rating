@@ -1,32 +1,25 @@
 export async function fetchAlbumLinks(title, artist) {
   try {
     const query = encodeURIComponent(`${title} ${artist}`);
-
-    // First: iTunes album search
-    const res = await fetch(
+    const iTunesRes = await fetch(
       `https://itunes.apple.com/search?term=${query}&entity=album&limit=1`
     );
-    const data = await res.json();
+    const data = await iTunesRes.json();
     const result = data.results?.[0];
-    if (!result) return {};
 
-    const appleUrl = result.collectionViewUrl;
-    const collectionId = result.collectionId;
+    const apple = result?.collectionViewUrl || null;
 
-    // Second: Song.link — universal platform resolver
-    const odesliRes = await fetch(
-      `https://api.song.link/v1-alpha.1/links?platform=itunes&type=album&id=${collectionId}`
+    // ✅ Improved Spotify search link
+    const spotifyQuery = encodeURIComponent(
+      `album:"${title}" artist:"${artist}"`
     );
-    const odesliData = await odesliRes.json();
+    const spotify = `https://open.spotify.com/search/${spotifyQuery}/albums`;
 
-    const linksByPlatform = odesliData.linksByPlatform || {};
+    // ✅ Future Option: YouTube Music too
+    const youtubeQuery = encodeURIComponent(`${title} ${artist} album`);
+    const youtube = `https://music.youtube.com/search?q=${youtubeQuery}`;
 
-    return {
-      apple: linksByPlatform.appleMusic?.url || null,
-      spotify: linksByPlatform.spotify?.url || null,
-      youtube: linksByPlatform.youtubeMusic?.url || null,
-    };
-
+    return { apple, spotify, youtube };
   } catch (e) {
     console.warn("fetchAlbumLinks error:", e);
     return {};
