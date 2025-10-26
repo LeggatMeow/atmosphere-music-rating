@@ -95,23 +95,37 @@ setFavoriteCount(favCount);
     }
 
     try {
-      // Wikipedia API fetch for description
-      const title = encodeURIComponent(`${album.title} (Atmosphere album)`);
-      const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
-      const res = await fetch(wikiUrl);
+  const searchTitles = [
+    `${album.title} (Atmosphere album)`,
+    `${album.title} album`,
+    `${album.title} Atmosphere`
+  ];
 
-      if (res.ok) {
-        const data = await res.json();
-        if (!cancelled) {
-          setAlbumBlurb(data.extract || "");
-        }
-      } else {
-        setAlbumBlurb("");
+  let found = false;
+
+  for (const t of searchTitles) {
+    const title = encodeURIComponent(t);
+    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
+    const res = await fetch(wikiUrl);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.extract) {
+        if (!cancelled) setAlbumBlurb(data.extract);
+        found = true;
+        break;
       }
-    } catch (e) {
-      console.warn("Wiki blurb failed", e);
-      setAlbumBlurb("");
     }
+  }
+
+  if (!found) {
+    setAlbumBlurb("");
+  }
+} catch (e) {
+  console.warn("Wiki blurb failed", e);
+  setAlbumBlurb("");
+}
+
 
     if (!cancelled) setLoadingBlurb(false);
   })();
