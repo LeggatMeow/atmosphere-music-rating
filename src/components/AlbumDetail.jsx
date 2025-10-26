@@ -4,6 +4,8 @@ import SongList from "./SongList";
 import { fetchAlbumArt } from "../utils/fetchAlbumArt";
 import { fetchWikiSummary } from "../utils/fetchWikiSummary";
 import { fetchAlbumLinks } from "../utils/fetchAlbumLinks";
+import ListenButtons from "./ListenButtons";
+
 
 
 
@@ -175,42 +177,7 @@ export default function AlbumDetail({ album, onBack }) {
             )}
           </div>
 
-          <div className="flex gap-2 mt-2 mb-4">
-  {albumLinks.apple && (
-    <a
-      href={albumLinks.apple}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-xs px-3 py-1 rounded bg-green-600 hover:bg-green-500 transition-colors"
-    >
-       Music
-    </a>
-  )}
-
-  {albumLinks.spotify && (
-    <a
-      href={albumLinks.spotify}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-xs px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 transition-colors"
-    >
-      Spotify
-    </a>
-  )}
-
-  {albumLinks.youtube && (
-  <a
-    href={albumLinks.youtube}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="..."
-  >
-    YouTube 🎵
-  </a>
-)}
-
-</div>
-
+          <ListenButtons links={albumLinks} />
 
           {/* Blurb + link */}
           {loadingBlurb ? (
