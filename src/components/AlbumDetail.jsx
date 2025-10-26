@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import SongList from "./SongList";
 import { fetchAlbumArt } from "../utils/fetchAlbumArt";
+import { fetchWikiSummary } from "../utils/fetchWikiSummary";
+
 
 export default function AlbumDetail({ album, onBack }) {
   const [albumAverage, setAlbumAverage] = useState(null);
@@ -87,45 +89,12 @@ setFavoriteCount(favCount);
     setLoadingBlurb(true);
 
     try {
-      // ✅ Album Art fetch (keep existing)
-      const url = await fetchAlbumArt(album.title, "Atmosphere");
-      if (!cancelled) setCover(url || null);
-    } catch (e) {
-      console.warn("Cover fetch failed", e);
-    }
-
-    try {
-  const searchTitles = [
-    `${album.title} (Atmosphere album)`,
-    `${album.title} album`,
-    `${album.title} Atmosphere`
-  ];
-
-  let found = false;
-
-  for (const t of searchTitles) {
-    const title = encodeURIComponent(t);
-    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
-    const res = await fetch(wikiUrl);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data.extract) {
-        if (!cancelled) setAlbumBlurb(data.extract);
-        found = true;
-        break;
-      }
-    }
-  }
-
-  if (!found) {
-    setAlbumBlurb("");
-  }
+  const summary = await fetchWikiSummary(`${album.title} Atmosphere album`);
+  if (!cancelled) setAlbumBlurb(summary);
 } catch (e) {
   console.warn("Wiki blurb failed", e);
   setAlbumBlurb("");
 }
-
 
     if (!cancelled) setLoadingBlurb(false);
   })();
