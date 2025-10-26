@@ -85,24 +85,42 @@ setFavoriteCount(favCount);
   useEffect(() => {
   let cancelled = false;
 
-  (async () => {
-    setLoadingBlurb(true);
-
-    try {
-  const summary = await fetchWikiSummary(`${album.title} Atmosphere album`);
-  if (!cancelled) setAlbumBlurb(summary);
-} catch (e) {
-  console.warn("Wiki blurb failed", e);
+  // ✅ Reset cover + blurb when changing albums
+  setCover(null);
   setAlbumBlurb("");
-}
+  setLoadingBlurb(true);
 
-    if (!cancelled) setLoadingBlurb(false);
+  // 🎨 Fetch album cover
+  (async () => {
+    try {
+      const url = await fetchAlbumArt(album.title, "Atmosphere");
+      if (!cancelled) setCover(url || null);
+    } catch (e) {
+      console.warn("Cover fetch failed for", album.title, e);
+      if (!cancelled) setCover(null);
+    }
+  })();
+
+  // Fetch Wiki blurb
+  (async () => {
+    try {
+      const summary = await fetchWikiSummary(
+        `${album.title} Atmosphere album`
+      );
+      if (!cancelled) setAlbumBlurb(summary);
+    } catch (e) {
+      console.warn("Wiki blurb failed for", album.title, e);
+      if (!cancelled) setAlbumBlurb("");
+    } finally {
+      if (!cancelled) setLoadingBlurb(false);
+    }
   })();
 
   return () => {
     cancelled = true;
   };
 }, [album.title]);
+
 
 
   return (
