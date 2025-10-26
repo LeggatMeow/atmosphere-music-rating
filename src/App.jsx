@@ -69,14 +69,15 @@ const handleSelectTrack = (albumId, trackId) => {
           </button>
 
           <button
-            onClick={() => {
-              setView("top-tracks");
-              setSelectedAlbum(null);
-            }}
-            className={view === "top-tracks" ? "text-yellow-400 font-semibold" : "text-gray-400 hover:text-gray-200"}
-          >
-            Top Tracks ⭐
-          </button>
+  onClick={() => {
+    setView("top-tracks");
+    setSelectedAlbum(null);
+  }}
+  className={view === "top-tracks" ? "text-yellow-400 font-semibold" : "text-gray-400 hover:text-gray-200"}
+>
+  My Top Tracks ⭐
+</button>
+
         </nav>
       </header>
 

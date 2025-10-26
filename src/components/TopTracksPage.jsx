@@ -29,7 +29,7 @@ export default function TopTracksPage({ onSelectTrack }) {
 
   return (
     <div className="space-y-2">
-      <h2 className="text-xl font-semibold mb-4">Your Top Rated Tracks</h2>
+      <h2 className="text-xl font-semibold mb-4">My Top Tracks</h2>
       {topTracks.map((track, idx) => (
         <div
           key={track.id}
