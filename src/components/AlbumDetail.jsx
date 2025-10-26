@@ -14,6 +14,8 @@ export default function AlbumDetail({ album, onBack }) {
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [albumBlurb, setAlbumBlurb] = useState("");
   const [loadingBlurb, setLoadingBlurb] = useState(true);
+  const [wikiUrl, setWikiUrl] = useState("");
+
 
 
 
@@ -104,10 +106,13 @@ setFavoriteCount(favCount);
   // Fetch Wiki blurb
   (async () => {
     try {
-      const summary = await fetchWikiSummary(
-        `${album.title} Atmosphere album`
-      );
-      if (!cancelled) setAlbumBlurb(summary);
+      const { summary, url } = await fetchWikiSummary(
+  `${album.title} Atmosphere album`
+);
+if (!cancelled) {
+  setAlbumBlurb(summary);
+  setWikiUrl(url || "");
+}
     } catch (e) {
       console.warn("Wiki blurb failed for", album.title, e);
       if (!cancelled) setAlbumBlurb("");
@@ -166,6 +171,17 @@ setFavoriteCount(favCount);
   <p className="text-gray-500 italic mb-4">Loading album info…</p>
 ) : albumBlurb ? (
   <p className="text-gray-300 text-sm mb-4 max-w-xl">{albumBlurb}</p>
+  {wikiUrl && (
+  <a
+    href={wikiUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-xs text-blue-400 hover:text-blue-300 underline"
+  >
+    Read more →
+  </a>
+)}
+
 ) : (
   <p className="text-gray-500 text-sm mb-4 italic">No info available.</p>
 )}
