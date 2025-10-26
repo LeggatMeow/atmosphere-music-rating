@@ -10,6 +10,9 @@ export default function AlbumDetail({ album, onBack }) {
   const [expanded, setExpanded] = useState(false);
   const [highlightedTrack, setHighlightedTrack] = useState(null);
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const [albumBlurb, setAlbumBlurb] = useState("");
+  const [loadingBlurb, setLoadingBlurb] = useState(true);
+
 
 
 
@@ -78,19 +81,46 @@ setFavoriteCount(favCount);
 
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const url = await fetchAlbumArt(album.title, "Atmosphere");
-        if (!cancelled) setCover(url || null);
-      } catch (e) {
-        console.warn("Detail cover fetch failed for", album.title, e);
+  let cancelled = false;
+
+  (async () => {
+    setLoadingBlurb(true);
+
+    try {
+      // ✅ Album Art fetch (keep existing)
+      const url = await fetchAlbumArt(album.title, "Atmosphere");
+      if (!cancelled) setCover(url || null);
+    } catch (e) {
+      console.warn("Cover fetch failed", e);
+    }
+
+    try {
+      // Wikipedia API fetch for description
+      const title = encodeURIComponent(`${album.title} (Atmosphere album)`);
+      const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
+      const res = await fetch(wikiUrl);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (!cancelled) {
+          setAlbumBlurb(data.extract || "");
+        }
+      } else {
+        setAlbumBlurb("");
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [album.title]);
+    } catch (e) {
+      console.warn("Wiki blurb failed", e);
+      setAlbumBlurb("");
+    }
+
+    if (!cancelled) setLoadingBlurb(false);
+  })();
+
+  return () => {
+    cancelled = true;
+  };
+}, [album.title]);
+
 
   return (
     <div>
@@ -131,9 +161,18 @@ setFavoriteCount(favCount);
             )}
           </div>
 
-          <p className="text-gray-300 max-w-xl">
-            Album tracklist — rate songs with 1–5 stars (half stars supported).
-          </p>
+          {loadingBlurb ? (
+  <p className="text-gray-500 italic mb-4">Loading album info…</p>
+) : albumBlurb ? (
+  <p className="text-gray-300 text-sm mb-4 max-w-xl">{albumBlurb}</p>
+) : (
+  <p className="text-gray-500 text-sm mb-4 italic">No info available.</p>
+)}
+
+<p className="text-gray-300 max-w-xl">
+  Album tracklist — rate songs with 1–5 stars (half stars supported).
+</p>
+
         </div>
       </div>
 
