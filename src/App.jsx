@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { bandData } from "./data/bandData";
 import * as tracks from "./data/tracks";
 import AlbumList from "./components/AlbumList";
@@ -9,6 +9,104 @@ export default function App() {
   const [view, setView] = useState("albums"); // "albums" | "top-tracks"
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [sortMode, setSortMode] = useState("oldest");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState("all");
+  const [ratingFilter, setRatingFilter] = useState("all");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim());
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  const albumSongsLookup = useMemo(() => {
+    const lookup = {};
+    Object.values(tracks).forEach((album) => {
+      lookup[album.albumId] = album.songs ?? [];
+    });
+    return lookup;
+  }, []);
+
+  const availableYears = useMemo(() => {
+    const unique = new Set(bandData.albums.map((album) => album.year).filter(Boolean));
+    return Array.from(unique).sort((a, b) => a - b);
+  }, []);
+
+  const availableGenres = useMemo(() => {
+    const unique = new Set(
+      bandData.albums
+        .map((album) => album.genre)
+        .filter(Boolean)
+    );
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, []);
+
+  const filteredAlbums = useMemo(() => {
+    const search = debouncedSearch.toLowerCase();
+
+    return bandData.albums
+      .map((album) => {
+        const songs = album.songs ?? albumSongsLookup[album.id] ?? [];
+
+        let sum = 0;
+        let count = 0;
+        songs.forEach((song) => {
+          const stored = localStorage.getItem(`rating-${song.id}`);
+          if (!stored) return;
+          const rating = parseFloat(stored);
+          if (!Number.isFinite(rating) || rating <= 0) return;
+          sum += rating;
+          count += 1;
+        });
+
+        return {
+          ...album,
+          songs,
+          averageRating: count ? sum / count : null,
+          ratedCount: count,
+          totalSongs: songs.length
+        };
+      })
+      .filter((album) => {
+        const matchesSearch =
+          !search ||
+          album.title.toLowerCase().includes(search) ||
+          (album.artist || bandData.name).toLowerCase().includes(search);
+
+        if (!matchesSearch) return false;
+        if (yearFilter !== "all" && String(album.year) !== yearFilter) return false;
+        if (genreFilter !== "all" && album.genre !== genreFilter) return false;
+
+        if (ratingFilter === "rated") {
+          return album.averageRating !== null;
+        }
+
+        if (ratingFilter === "unrated") {
+          return album.averageRating === null;
+        }
+
+        if (ratingFilter !== "all") {
+          const threshold = parseFloat(ratingFilter);
+          if (!Number.isNaN(threshold)) {
+            return album.averageRating !== null && album.averageRating >= threshold;
+          }
+        }
+
+        return true;
+      });
+  }, [albumSongsLookup, debouncedSearch, genreFilter, ratingFilter, yearFilter]);
+
+  const ratingOptions = [
+    { label: "All ratings", value: "all" },
+    { label: "4+ stars", value: "4" },
+    { label: "3+ stars", value: "3" },
+    { label: "2+ stars", value: "2" },
+    { label: "Rated only", value: "rated" },
+    { label: "Unrated only", value: "unrated" }
+  ];
 
   const handleSelectTrack = (albumId, trackId) => {
     handleSelectAlbum(albumId);
@@ -88,32 +186,104 @@ export default function App() {
         </header>
 
         {view === "albums" && !selectedAlbum && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mb-6 text-sm">
-            <p className="text-gray-400 sm:mr-auto text-xs uppercase tracking-wide">
-              Sort albums
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setSortMode("oldest")}
-                className={sortMode === "oldest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
-              >
-                Oldest
-              </button>
-              <button
-                type="button"
-                onClick={() => setSortMode("newest")}
-                className={sortMode === "newest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
-              >
-                Newest
-              </button>
-              <button
-                type="button"
-                onClick={() => setSortMode("highest")}
-                className={sortMode === "highest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
-              >
-                Highest Rated
-              </button>
+          <div className="mb-6 space-y-4 bg-neutral-850/60 border border-neutral-700/40 rounded-lg p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+              <div className="flex-1">
+                <label htmlFor="album-search" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
+                  Search albums or artist
+                </label>
+                <input
+                  id="album-search"
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Find an album..."
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:flex-1">
+                <div>
+                  <label htmlFor="year-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
+                    Year
+                  </label>
+                  <select
+                    id="year-filter"
+                    value={yearFilter}
+                    onChange={(event) => setYearFilter(event.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                  >
+                    <option value="all">All years</option>
+                    {availableYears.map((year) => (
+                      <option key={year} value={String(year)}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="genre-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
+                    Genre
+                  </label>
+                  <select
+                    id="genre-filter"
+                    value={genreFilter}
+                    onChange={(event) => setGenreFilter(event.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                  >
+                    <option value="all">All genres</option>
+                    {availableGenres.map((genre) => (
+                      <option key={genre} value={genre}>
+                        {genre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="rating-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
+                    Rating
+                  </label>
+                  <select
+                    id="rating-filter"
+                    value={ratingFilter}
+                    onChange={(event) => setRatingFilter(event.target.value)}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                  >
+                    {ratingOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm">
+              <p className="text-gray-400 sm:mr-auto text-xs uppercase tracking-wide">
+                Sort albums
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSortMode("oldest")}
+                  className={sortMode === "oldest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
+                >
+                  Oldest
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortMode("newest")}
+                  className={sortMode === "newest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
+                >
+                  Newest
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortMode("highest")}
+                  className={sortMode === "highest" ? "text-yellow-300 font-semibold" : "text-gray-400"}
+                >
+                  Highest Rated
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -122,8 +292,10 @@ export default function App() {
           <AlbumDetail album={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
         ) : view === "top-tracks" ? (
           <TopTracksPage onSelectTrack={handleSelectTrack} />
+        ) : filteredAlbums.length ? (
+          <AlbumList albums={filteredAlbums} onSelect={handleSelectAlbum} sortMode={sortMode} />
         ) : (
-          <AlbumList albums={bandData.albums} onSelect={handleSelectAlbum} sortMode={sortMode} />
+          <p className="text-gray-400 text-center text-sm">No albums match the current filters.</p>
         )}
       </div>
     </div>
