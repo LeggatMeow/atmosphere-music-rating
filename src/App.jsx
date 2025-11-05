@@ -33,7 +33,7 @@ export default function App() {
 
   const navButtonClass = (isActive) => [
     "px-4 py-2 rounded-md border transition-colors text-center",
-    "flex-1 sm:flex-none",
+    "w-full sm:w-auto",
     isActive
       ? "text-yellow-300 border-yellow-500/70 bg-neutral-800"
       : "text-gray-300 border-transparent hover:text-gray-100 hover:border-neutral-600"
@@ -43,7 +43,7 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-800 text-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="w-20 h-20 rounded-md bg-neutral-700 flex items-center justify-center">
               <svg
                 viewBox="0 0 100 100"
@@ -60,7 +60,7 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="flex w-full sm:w-auto gap-3 text-sm flex-wrap sm:flex-nowrap sm:justify-end">
+          <nav className="flex flex-col sm:flex-row w-full sm:w-auto gap-2 sm:gap-3 text-sm sm:justify-end mt-1 sm:mt-0">
             <button
               type="button"
               onClick={() => {
