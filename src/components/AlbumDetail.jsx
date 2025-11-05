@@ -80,67 +80,67 @@ export default function AlbumDetail({ album, onBack }) {
 
   // ---- Cover + Wikipedia blurb fetch ---------------------------------------
   useEffect(() => {
-  let cancelled = false;
+    let cancelled = false;
 
-  // Reset when album changes
-  setCover(null);
-  setAlbumBlurb("");
-  setWikiUrl("");
-  setAlbumLinks({});
-  setLoadingBlurb(true);
+    // Reset when album changes
+    setCover(null);
+    setAlbumBlurb("");
+    setWikiUrl("");
+    setAlbumLinks({});
+    setLoadingBlurb(true);
 
-  // Cover fetch
-  (async () => {
-    try {
-      const url = await fetchAlbumArt(album.title, "Atmosphere");
-      if (!cancelled) setCover(url || null);
-    } catch (e) {
-      console.warn("Cover fetch failed", e);
-      if (!cancelled) setCover(null);
-    }
-  })();
-
-  //  Wikipedia blurb fetch
-  (async () => {
-    try {
-      const { summary, url } = await fetchWikiSummary(
-        `${album.title} Atmosphere album`
-      );
-      if (!cancelled) {
-        setAlbumBlurb(summary || "");
-        setWikiUrl(url || "");
+    // Cover fetch
+    (async () => {
+      try {
+        const url = await fetchAlbumArt(album.title, "Atmosphere");
+        if (!cancelled) setCover(url || null);
+      } catch (e) {
+        console.warn("Cover fetch failed", e);
+        if (!cancelled) setCover(null);
       }
-    } catch {
-      if (!cancelled) {
-        setAlbumBlurb("");
-        setWikiUrl("");
+    })();
+
+    //  Wikipedia blurb fetch
+    (async () => {
+      try {
+        const { summary, url } = await fetchWikiSummary(
+          `${album.title} Atmosphere album`
+        );
+        if (!cancelled) {
+          setAlbumBlurb(summary || "");
+          setWikiUrl(url || "");
+        }
+      } catch {
+        if (!cancelled) {
+          setAlbumBlurb("");
+          setWikiUrl("");
+        }
+      } finally {
+        if (!cancelled) setLoadingBlurb(false);
       }
-    } finally {
-      if (!cancelled) setLoadingBlurb(false);
-    }
-  })();
+    })();
 
-  // Streaming links fetch
-  (async () => {
-    try {
-      const links = await fetchAlbumLinks(album.title, "Atmosphere");
-      if (!cancelled) setAlbumLinks(links);
-    } catch {
-      if (!cancelled) setAlbumLinks({});
-    }
-  })();
+    // Streaming links fetch
+    (async () => {
+      try {
+        const links = await fetchAlbumLinks(album.title, "Atmosphere");
+        if (!cancelled) setAlbumLinks(links);
+      } catch {
+        if (!cancelled) setAlbumLinks({});
+      }
+    })();
 
-  return () => {
-    cancelled = true;
-  };
-}, [album.title]);
+    return () => {
+      cancelled = true;
+    };
+  }, [album.title]);
 
 
   // ---- Render ---------------------------------------------------------------
   return (
     <div>
       <button onClick={onBack} className="text-sm text-gray-400 mb-4">
-        ← Back
+        {"\u2190"} Back
       </button>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sticky top-0 bg-neutral-900/90 backdrop-blur-sm pb-4 z-20">
@@ -160,7 +160,7 @@ export default function AlbumDetail({ album, onBack }) {
             {albumAverage ? (
               <>
                 <p className="text-yellow-400 font-semibold">
-                  Album Avg: {albumAverage} ⭐
+                  Album Avg: {albumAverage} {"\u2B50"}
                 </p>
                 <p className="text-gray-400 text-sm">
                   Songs rated: {ratedCount}/{songs.length}
@@ -168,7 +168,7 @@ export default function AlbumDetail({ album, onBack }) {
 
                 {/* Favorites line */}
                 <p className="text-gray-400 text-sm flex items-center gap-1">
-                  <span className="text-red-400">♥</span>
+                  <span className="text-red-400">{"\u2665"}</span>
                   {favoriteCount}
                 </p>
               </>
@@ -181,7 +181,7 @@ export default function AlbumDetail({ album, onBack }) {
 
           {/* Blurb + link */}
           {loadingBlurb ? (
-            <p className="text-gray-500 italic mb-4">Loading album info…</p>
+            <p className="text-gray-500 italic mb-4">Loading album info...</p>
           ) : albumBlurb ? (
             <>
               <p className="text-gray-300 text-sm mb-2 max-w-xl">
@@ -194,7 +194,7 @@ export default function AlbumDetail({ album, onBack }) {
                   rel="noopener noreferrer"
                   className="text-xs text-blue-400 hover:text-blue-300 underline"
                 >
-                  Read more →
+                  Read more {"\u2192"}
                 </a>
               )}
             </>
@@ -203,7 +203,7 @@ export default function AlbumDetail({ album, onBack }) {
           )}
 
           <p className="text-gray-300 max-w-xl mt-3">
-            Album tracklist — rate songs with 1–5 stars (half stars supported).
+            Album tracklist - rate songs with 1-5 stars (half stars supported).
           </p>
         </div>
       </div>
@@ -212,7 +212,7 @@ export default function AlbumDetail({ album, onBack }) {
       {topTracks.length > 0 && (
         <div className="mb-6 bg-neutral-850 p-3 rounded-lg shadow-md border border-neutral-700/50">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">🏆</span>
+            <span className="text-lg">{"\u{1F3C6}"}</span>
             <h3 className="text-lg font-semibold text-yellow-400">Top Rated Tracks</h3>
 
             {topTracks.length > 3 && (
@@ -245,7 +245,7 @@ export default function AlbumDetail({ album, onBack }) {
                     {index + 1}. {song.title}
                   </span>
                   <span className="text-yellow-400 text-sm">
-                    {song.rating.toFixed(1)} ⭐
+                    {song.rating.toFixed(1)} {"\u2B50"}
                   </span>
                 </li>
               ))}
@@ -266,9 +266,8 @@ export default function AlbumDetail({ album, onBack }) {
           onFavoriteChange={handleRateChange}
         />
       ) : (
-        <p className="text-gray-400 italic mt-4">Tracklist coming soon…</p>
+        <p className="text-gray-400 italic mt-4">Tracklist coming soon...</p>
       )}
     </div>
   );
 }
-

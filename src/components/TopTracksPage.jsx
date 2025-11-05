@@ -40,10 +40,9 @@ export default function TopTracksPage({ onSelectTrack }) {
             <p className="text-gray-100">{idx + 1}. {track.title}</p>
             <p className="text-gray-400 text-xs">{track.albumTitle}</p>
           </div>
-          <p className="text-yellow-400">{track.rating.toFixed(1)} ⭐</p>
+          <p className="text-yellow-400">{track.rating.toFixed(1)} {"\u2B50"}</p>
         </div>
       ))}
     </div>
   );
 }
-
