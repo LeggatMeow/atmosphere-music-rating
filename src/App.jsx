@@ -43,7 +43,7 @@ const handleSelectTrack = (albumId, trackId) => {
   <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-800 text-gray-100 p-6">
     <div className="max-w-4xl mx-auto">
 
-      {/* ✅ Header + Nav */}
+      {/* 1. Header + Nav */}
       <header className="flex items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-md bg-neutral-700 flex items-center justify-center">
@@ -81,7 +81,7 @@ const handleSelectTrack = (albumId, trackId) => {
         </nav>
       </header>
 
-      {/* ✅ Sorting buttons only show on Albums view (not Top Tracks or Album Detail) */}
+      {/* 2. Sorting buttons only show on Albums view (not Top Tracks or Album Detail) */}
       {view === "albums" && !selectedAlbum && (
         <div className="flex gap-4 mb-6 text-sm">
           <button
@@ -105,7 +105,7 @@ const handleSelectTrack = (albumId, trackId) => {
         </div>
       )}
 
-      {/* ✅ Main view switching */}
+      {/* 3. Main view switching */}
       {selectedAlbum ? (
         <AlbumDetail album={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
       ) : view === "top-tracks" ? (
@@ -121,3 +121,4 @@ const handleSelectTrack = (albumId, trackId) => {
   </div>
 );
 }
+

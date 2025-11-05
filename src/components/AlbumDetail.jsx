@@ -166,7 +166,7 @@ export default function AlbumDetail({ album, onBack }) {
                   Songs rated: {ratedCount}/{songs.length}
                 </p>
 
-                {/* ❤️ Favorites line — change to just {favoriteCount} if you prefer */}
+                {/* Favorites line */}
                 <p className="text-gray-400 text-sm flex items-center gap-1">
                   <span className="text-red-400">♥</span>
                   {favoriteCount}
@@ -212,7 +212,7 @@ export default function AlbumDetail({ album, onBack }) {
       {topTracks.length > 0 && (
         <div className="mb-6 bg-neutral-850 p-3 rounded-lg shadow-md border border-neutral-700/50">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">🔥</span>
+            <span className="text-lg">🏆</span>
             <h3 className="text-lg font-semibold text-yellow-400">Top Rated Tracks</h3>
 
             {topTracks.length > 3 && (
@@ -271,3 +271,4 @@ export default function AlbumDetail({ album, onBack }) {
     </div>
   );
 }
+
