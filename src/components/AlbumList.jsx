@@ -9,10 +9,17 @@ function getRatingColor(avg) {
 }
 
 function AlbumCard({ album, onSelect }) {
-  const [cover, setCover] = useState(null);
-  
+  const [cover, setCover] = useState(album.cover ?? null);
+
   useEffect(() => {
     let cancelled = false;
+    if (album.cover) {
+      setCover(album.cover);
+      return () => {
+        cancelled = true;
+      };
+    }
+
     (async () => {
       try {
         const url = await fetchAlbumArt(album.title, "Atmosphere");
@@ -21,8 +28,10 @@ function AlbumCard({ album, onSelect }) {
         if (!cancelled) setCover(null);
       }
     })();
-    return () => { cancelled = true; };
-  }, [album.title]);
+    return () => {
+      cancelled = true;
+    };
+  }, [album.cover, album.title]);
 
   const songs = album.songs ?? [];
 
