@@ -12,8 +12,6 @@ export default function App() {
   const [sortMode, setSortMode] = useState("oldest");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [yearFilter, setYearFilter] = useState("all");
-  const [genreFilter, setGenreFilter] = useState("all");
   const [ratingFilter, setRatingFilter] = useState("all");
 
   useEffect(() => {
@@ -29,20 +27,6 @@ export default function App() {
       lookup[album.albumId] = album.songs ?? [];
     });
     return lookup;
-  }, []);
-
-  const availableYears = useMemo(() => {
-    const unique = new Set(bandData.albums.map((album) => album.year).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a - b);
-  }, []);
-
-  const availableGenres = useMemo(() => {
-    const unique = new Set(
-      bandData.albums
-        .map((album) => album.genre)
-        .filter(Boolean)
-    );
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, []);
 
   const filteredAlbums = useMemo(() => {
@@ -78,8 +62,6 @@ export default function App() {
           (album.artist || bandData.name).toLowerCase().includes(search);
 
         if (!matchesSearch) return false;
-        if (yearFilter !== "all" && String(album.year) !== yearFilter) return false;
-        if (genreFilter !== "all" && album.genre !== genreFilter) return false;
 
         if (ratingFilter === "rated") {
           return album.averageRating !== null;
@@ -98,7 +80,7 @@ export default function App() {
 
         return true;
       });
-  }, [albumSongsLookup, debouncedSearch, genreFilter, ratingFilter, yearFilter]);
+  }, [albumSongsLookup, debouncedSearch, ratingFilter]);
 
   const ratingOptions = [
     { label: "All ratings", value: "all" },
@@ -232,60 +214,22 @@ export default function App() {
                   className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:flex-1">
-                <div>
-                  <label htmlFor="year-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
-                    Year
-                  </label>
-                  <select
-                    id="year-filter"
-                    value={yearFilter}
-                    onChange={(event) => setYearFilter(event.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
-                  >
-                    <option value="all">All years</option>
-                    {availableYears.map((year) => (
-                      <option key={year} value={String(year)}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="genre-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
-                    Genre
-                  </label>
-                  <select
-                    id="genre-filter"
-                    value={genreFilter}
-                    onChange={(event) => setGenreFilter(event.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
-                  >
-                    <option value="all">All genres</option>
-                    {availableGenres.map((genre) => (
-                      <option key={genre} value={genre}>
-                        {genre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="rating-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
-                    Rating
-                  </label>
-                  <select
-                    id="rating-filter"
-                    value={ratingFilter}
-                    onChange={(event) => setRatingFilter(event.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
-                  >
-                    {ratingOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="sm:w-48">
+                <label htmlFor="rating-filter" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
+                  Rating
+                </label>
+                <select
+                  id="rating-filter"
+                  value={ratingFilter}
+                  onChange={(event) => setRatingFilter(event.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                >
+                  {ratingOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm">
