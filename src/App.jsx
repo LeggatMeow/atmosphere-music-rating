@@ -4,6 +4,7 @@ import * as tracks from "./data/tracks";
 import AlbumList from "./components/AlbumList";
 import AlbumDetail from "./components/AlbumDetail";
 import TopTracksPage from "./components/TopTracksPage";
+import SongSearchResults from "./components/SongSearchResults";
 
 export default function App() {
   const [view, setView] = useState("albums"); // "albums" | "top-tracks"
@@ -108,6 +109,36 @@ export default function App() {
     { label: "Unrated only", value: "unrated" }
   ];
 
+  const allSongs = useMemo(() => {
+    return bandData.albums.flatMap((album) => {
+      const songs = albumSongsLookup[album.id] ?? [];
+      return songs.map((song, originalIndex) => ({
+        ...song,
+        albumId: album.id,
+        albumTitle: album.title,
+        albumYear: album.year,
+        originalIndex
+      }));
+    });
+  }, [albumSongsLookup]);
+
+  const matchingSongs = useMemo(() => {
+    const query = debouncedSearch.trim().toLowerCase();
+    if (!query) return [];
+
+    return allSongs
+      .filter((song) => song.title.toLowerCase().includes(query))
+      .sort((a, b) => {
+        if (a.albumYear && b.albumYear && a.albumYear !== b.albumYear) {
+          return a.albumYear - b.albumYear;
+        }
+        if (a.albumTitle !== b.albumTitle) {
+          return a.albumTitle.localeCompare(b.albumTitle);
+        }
+        return a.originalIndex - b.originalIndex;
+      });
+  }, [allSongs, debouncedSearch]);
+
   const handleSelectTrack = (albumId, trackId) => {
     handleSelectAlbum(albumId);
     setTimeout(() => {
@@ -190,14 +221,14 @@ export default function App() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
               <div className="flex-1">
                 <label htmlFor="album-search" className="text-xs uppercase tracking-wide text-gray-400 block mb-1">
-                  Search albums or artist
+                  Search albums or songs
                 </label>
                 <input
                   id="album-search"
                   type="search"
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Find an album..."
+                  placeholder="Find an album or song..."
                   className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
                 />
               </div>
@@ -296,6 +327,15 @@ export default function App() {
           <AlbumList albums={filteredAlbums} onSelect={handleSelectAlbum} sortMode={sortMode} />
         ) : (
           <p className="text-gray-400 text-center text-sm">No albums match the current filters.</p>
+        )}
+
+        {view === "albums" && !selectedAlbum && debouncedSearch && (
+          <div className="mt-6">
+            <SongSearchResults
+              songs={matchingSongs}
+              onSelectTrack={handleSelectTrack}
+            />
+          </div>
         )}
       </div>
     </div>
