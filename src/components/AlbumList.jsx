@@ -29,16 +29,22 @@ function AlbumCard({ album, onSelect }) {
   const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
   const favoriteCount = songs.filter((s) => favorites.includes(s.id)).length;
 
-  const ratings = songs.map(song => {
-    const saved = localStorage.getItem(`rating-${song.id}`);
-    return saved ? parseFloat(saved) : 0;
-  });
-  const ratedCount = ratings.filter(r => r > 0).length;
-  const avg = ratedCount > 0
-    ? (ratings.filter(r => r > 0).reduce((a,b)=>a+b,0) / ratedCount).toFixed(1)
-    : null;
+  let ratedCount = album.ratedCount;
+  let averageRating = typeof album.averageRating === "number" ? album.averageRating : null;
 
-  const progressPercent = (ratedCount / songs.length) * 100;
+  if (ratedCount === undefined || ratedCount === null) {
+    const ratings = songs.map((song) => {
+      const saved = localStorage.getItem(`rating-${song.id}`);
+      return saved ? parseFloat(saved) : 0;
+    });
+    const rated = ratings.filter((r) => r > 0);
+    ratedCount = rated.length;
+    averageRating = rated.length ? rated.reduce((total, r) => total + r, 0) / rated.length : null;
+  }
+
+  const totalSongs = album.totalSongs ?? songs.length;
+  const avgDisplay = averageRating !== null ? averageRating.toFixed(1) : null;
+  const progressPercent = totalSongs > 0 ? (ratedCount / totalSongs) * 100 : 0;
 
   return (
     <button
@@ -55,15 +61,15 @@ function AlbumCard({ album, onSelect }) {
         )}
 
         {/* Overlay animated in only if avg exists */}
-        {(avg || ratedCount > 0) && (
+        {(avgDisplay || ratedCount > 0) && (
   <div
     className={`absolute bottom-0 left-0 w-full bg-black/60 text-sm py-1 px-2
     flex items-center gap-3 justify-center transition-opacity duration-500 opacity-100`}
   >
     {/* ⭐ Album Rating */}
-    {avg && (
-      <span className={`${getRatingColor(avg)} flex items-center gap-1`}>
-        {avg}
+    {avgDisplay && (
+      <span className={`${getRatingColor(averageRating)} flex items-center gap-1`}>
+        {avgDisplay}
         <span>⭐</span>
       </span>
     )}
@@ -85,7 +91,7 @@ function AlbumCard({ album, onSelect }) {
       {/* Progress text */}
       {ratedCount > 0 && (
         <div className="text-gray-500 text-sm">
-          Songs rated: {ratedCount}/{songs.length}
+          Songs rated: {ratedCount}/{totalSongs || songs.length}
         </div>
       )}
 
@@ -115,24 +121,26 @@ function AlbumSection({ title, albums, onSelect }) {
 }
 
 export default function AlbumList({ albums, onSelect, sortMode }) {
+  const computeAverageRating = (album) => {
+    if (typeof album?.averageRating === "number") return album.averageRating;
+    const songs = album?.songs ?? [];
+    if (!songs.length) return 0;
+
+    const ratings = songs.map((song) => {
+      const saved = localStorage.getItem(`rating-${song.id}`);
+      return saved ? parseFloat(saved) : 0;
+    });
+    const rated = ratings.filter((r) => r > 0);
+    if (!rated.length) return 0;
+    return rated.reduce((total, rating) => total + rating, 0) / rated.length;
+  };
+
   const sortedAlbums = useMemo(() => {
-    let list = [...albums];
+    const list = [...albums];
 
     // ✅ Sorting logic
     if (sortMode === "highest") {
-      return list.sort((a, b) => {
-        const getAvg = album => {
-          const songs = album.songs ?? [];
-          const ratings = songs.map(song => {
-            const saved = localStorage.getItem(`rating-${song.id}`);
-            return saved ? parseFloat(saved) : 0;
-          });
-          const ratedCount = ratings.filter(r => r > 0).length;
-          if (!ratedCount) return 0;
-          return ratings.reduce((x,y)=>x+y,0) / ratedCount;
-        };
-        return getAvg(b) - getAvg(a);
-      });
+      return list.sort((a, b) => computeAverageRating(b) - computeAverageRating(a));
     }
 
     if (sortMode === "newest") {

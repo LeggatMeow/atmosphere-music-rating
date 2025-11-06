@@ -1,5 +1,5 @@
 // src/components/SongList.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SongRating from "./SongRating";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,13 +11,16 @@ export default function SongList({
   albumId,
   onRateChange,
   highlightedTrack,
-  onFavoriteChange
+  onFavoriteChange,
+  searchTerm = "",
+  ratingFilter = "all"
 }) {
   if (!songs?.length) return <p>No tracks available.</p>;
 
   const [favorites, setFavorites] = useState([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [sortMode, setSortMode] = useState("album");
+  const normalizedSearch = searchTerm.trim().toLowerCase();
 
   // Load favorites from storage
   useEffect(() => {
@@ -37,14 +40,68 @@ export default function SongList({
     onFavoriteChange?.();
   };
 
+  const visibleSongs = useMemo(() => {
+    return songs
+      .map((song, idx) => {
+        const safeId = song.id || `${albumId}-${slug(song.title)}-${idx}`;
+        const stored = localStorage.getItem(`rating-${safeId}`);
+        const rating = stored ? parseFloat(stored) : 0;
+
+        return {
+          song,
+          safeId,
+          rating: Number.isFinite(rating) ? rating : 0,
+          originalIndex: idx
+        };
+      })
+      .filter((item) => !showFavoritesOnly || favorites.includes(item.safeId))
+      .filter((item) => {
+        if (!normalizedSearch) return true;
+        return item.song.title.toLowerCase().includes(normalizedSearch);
+      })
+      .filter((item) => {
+        if (ratingFilter === "rated") return item.rating > 0;
+        if (ratingFilter === "unrated") return item.rating <= 0;
+
+        if (ratingFilter !== "all") {
+          const threshold = parseFloat(ratingFilter);
+          if (!Number.isNaN(threshold)) {
+            return item.rating >= threshold;
+          }
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortMode === "rating") {
+          return b.rating - a.rating;
+        }
+        return a.originalIndex - b.originalIndex;
+      });
+  }, [
+    albumId,
+    favorites,
+    normalizedSearch,
+    ratingFilter,
+    showFavoritesOnly,
+    songs,
+    sortMode
+  ]);
+
+  const renderCount = visibleSongs.length;
+
   return (
     <div className="space-y-3">
 
       {/* ❤️ Favorites Filter Toggle */}
-      <div className="flex justify-end gap-2 mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 text-xs sm:text-sm text-gray-400">
+        <p>
+          Showing {renderCount} of {songs.length} track
+          {songs.length === 1 ? "" : "s"}
+        </p>
+
         <button
           onClick={() => setShowFavoritesOnly((prev) => !prev)}
-          className="text-sm text-gray-400 hover:text-red-400 transition"
+          className="text-gray-400 hover:text-red-400 transition"
         >
           {showFavoritesOnly ? "Show All Songs" : "Show Favorites Only ♥"}
         </button>
@@ -54,81 +111,76 @@ export default function SongList({
           onClick={() =>
             setSortMode((prev) => (prev === "album" ? "rating" : "album"))
           }
-          className="text-sm text-gray-400 hover:text-yellow-400 transition"
+          className="text-gray-400 hover:text-yellow-400 transition"
         >
           {sortMode === "album" ? "Sort by Rating ⭐" : "Sort by Album Order"}
         </button>
       </div>
 
       <AnimatePresence>
-        {songs
-          // ❤️ Filter favorites
-          .filter((song) => !showFavoritesOnly || favorites.includes(song.id))
+        {renderCount
+          ? visibleSongs.map(({ song, safeId }, idx) => {
+              const isFav = favorites.includes(safeId);
+              const isHighlighted = highlightedTrack === safeId;
 
-          // ⭐ Sorting
-          .sort((a, b) => {
-            if (sortMode === "rating") {
-              const getRating = (s) => {
-                const saved = localStorage.getItem(`rating-${s.id}`);
-                return saved ? parseFloat(saved) : 0;
-              };
-              return getRating(b) - getRating(a);
-            }
-            return 0; // Album order
-          })
-
-          .map((song, idx) => {
-            const safeId =
-              song.id || `${albumId}-${slug(song.title)}-${idx}`;
-            const isFav = favorites.includes(safeId);
-            const isHighlighted = highlightedTrack === safeId;
-
-            return (
-              <motion.div
-                key={safeId}
-                id={safeId}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.35 }}
-                className={`flex items-center justify-between p-2 rounded
+              return (
+                <motion.div
+                  key={safeId}
+                  id={safeId}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                  className={`flex items-center justify-between p-2 rounded
                 transition-colors duration-500
                 ${
                   isHighlighted
                     ? "bg-yellow-500/20"
                     : "bg-neutral-800"
                 }`}
-              >
-                <p className="font-medium">
-                  {idx + 1}. {song.title}
-                </p>
+                >
+                  <p className="font-medium">
+                    {idx + 1}. {song.title}
+                  </p>
 
-                <div className="flex items-center gap-3">
-                  {/* ❤️ Favorite */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(safeId);
-                    }}
-                    className={`text-xl transition-all ${
-                      isFav
-                        ? "text-red-400"
-                        : "text-gray-500 hover:text-red-300"
-                    }`}
-                  >
-                    ♥
-                  </button>
+                  <div className="flex items-center gap-3">
+                    {/* ❤️ Favorite */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(safeId);
+                      }}
+                      className={`text-xl transition-all ${
+                        isFav
+                          ? "text-red-400"
+                          : "text-gray-500 hover:text-red-300"
+                      }`}
+                    >
+                      ♥
+                    </button>
 
-                  {/* ⭐ Rating UI */}
-                  <SongRating
-                    song={{ ...song, id: safeId }}
-                    onRateChange={onRateChange}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
+                    {/* ⭐ Rating UI */}
+                    <SongRating
+                      song={{ ...song, id: safeId }}
+                      onRateChange={onRateChange}
+                    />
+                  </div>
+                </motion.div>
+              );
+            })
+          : (
+            <motion.div
+              key="empty"
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="p-3 rounded bg-neutral-800 text-sm text-gray-400"
+            >
+              No tracks match the current filters.
+            </motion.div>
+          )}
       </AnimatePresence>
 
     </div>
