@@ -6,9 +6,6 @@ import { fetchWikiSummary } from "../utils/fetchWikiSummary";
 import { fetchAlbumLinks } from "../utils/fetchAlbumLinks";
 import ListenButtons from "./ListenButtons";
 
-
-
-
 export default function AlbumDetail({ album, onBack }) {
   const [albumAverage, setAlbumAverage] = useState(null);
   const [ratedCount, setRatedCount] = useState(0);
@@ -25,6 +22,9 @@ export default function AlbumDetail({ album, onBack }) {
   const [highlightedTrack, setHighlightedTrack] = useState(null);
 
   const [albumLinks, setAlbumLinks] = useState({});
+  const [trackSearchTerm, setTrackSearchTerm] = useState("");
+  const [debouncedTrackSearch, setDebouncedTrackSearch] = useState("");
+  const [trackRatingFilter, setTrackRatingFilter] = useState("all");
 
 
   const songs = album?.songs ?? [];
@@ -134,6 +134,29 @@ export default function AlbumDetail({ album, onBack }) {
       cancelled = true;
     };
   }, [album.title]);
+
+  useEffect(() => {
+    setTrackSearchTerm("");
+    setDebouncedTrackSearch("");
+    setTrackRatingFilter("all");
+  }, [album.id]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedTrackSearch(trackSearchTerm.trim());
+    }, 250);
+
+    return () => clearTimeout(handler);
+  }, [trackSearchTerm]);
+
+  const trackRatingOptions = [
+    { value: "all", label: "All ratings" },
+    { value: "4", label: "4+ stars" },
+    { value: "3.5", label: "3.5+ stars" },
+    { value: "3", label: "3+ stars" },
+    { value: "rated", label: "Rated only" },
+    { value: "unrated", label: "Unrated only" }
+  ];
 
 
   // ---- Render ---------------------------------------------------------------
@@ -258,13 +281,53 @@ export default function AlbumDetail({ album, onBack }) {
 
       {/* Tracklist */}
       {album.type === "studio" ? (
-        <SongList
-          songs={songs}
-          albumId={album.id}
-          onRateChange={handleRateChange}
-          highlightedTrack={highlightedTrack}
-          onFavoriteChange={handleRateChange}
-        />
+        <>
+          <div className="bg-neutral-850/60 border border-neutral-700/40 rounded-lg p-3 mb-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+              <label className="flex-1">
+                <span className="block text-xs uppercase tracking-wide text-gray-400 mb-1">
+                  Search tracklist
+                </span>
+                <input
+                  type="search"
+                  value={trackSearchTerm}
+                  onChange={(event) => setTrackSearchTerm(event.target.value)}
+                  placeholder="Filter tracks by title..."
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                />
+              </label>
+              <label className="sm:w-40">
+                <span className="block text-xs uppercase tracking-wide text-gray-400 mb-1">
+                  Rating
+                </span>
+                <select
+                  value={trackRatingFilter}
+                  onChange={(event) => setTrackRatingFilter(event.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+                >
+                  {trackRatingOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              Use filters to focus on favorites, high-rated tracks, or specific titles.
+            </p>
+          </div>
+
+          <SongList
+            songs={songs}
+            albumId={album.id}
+            onRateChange={handleRateChange}
+            highlightedTrack={highlightedTrack}
+            onFavoriteChange={handleRateChange}
+            searchTerm={debouncedTrackSearch}
+            ratingFilter={trackRatingFilter}
+          />
+        </>
       ) : (
         <p className="text-gray-400 italic mt-4">Tracklist coming soon...</p>
       )}
