@@ -166,7 +166,7 @@ export default function AlbumDetail({ album, onBack }) {
         {"\u2190"} Back
       </button>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sticky top-0 bg-neutral-900/90 backdrop-blur-sm pb-4 z-20">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:sticky sm:top-0 bg-neutral-900/90 backdrop-blur-sm pb-4 z-20">
         {cover && (
           <img
             src={cover}
