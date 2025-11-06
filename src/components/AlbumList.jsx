@@ -13,21 +13,21 @@ function AlbumCard({ album, onSelect }) {
 
   useEffect(() => {
     let cancelled = false;
-    if (album.cover) {
-      setCover(album.cover);
-      return () => {
-        cancelled = true;
-      };
-    }
+
+    // Show bundled cover immediately (if provided)
+    setCover(album.cover ?? null);
 
     (async () => {
       try {
         const url = await fetchAlbumArt(album.title, "Atmosphere");
-        if (!cancelled) setCover(url || null);
+        if (!cancelled && url) {
+          setCover(url);
+        }
       } catch {
-        if (!cancelled) setCover(null);
+        // Ignore errors so we keep any existing bundled cover
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -66,6 +66,7 @@ function AlbumCard({ album, onSelect }) {
             src={cover}
             alt={album.title}
             className="w-full h-48 object-cover rounded"
+            onError={() => setCover(null)}
           />
         )}
 
