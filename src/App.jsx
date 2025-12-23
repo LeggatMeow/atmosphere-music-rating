@@ -5,8 +5,11 @@ import AlbumList from "./components/AlbumList";
 import AlbumDetail from "./components/AlbumDetail";
 import TopTracksPage from "./components/TopTracksPage";
 import SongSearchResults from "./components/SongSearchResults";
+import Login from "./components/Login";
+import { useAuth } from "./contexts/AuthContext";
 
 export default function App() {
+  const { user, loading } = useAuth();
   const [view, setView] = useState("albums"); // "albums" | "top-tracks"
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [sortMode, setSortMode] = useState("oldest");
@@ -149,6 +152,20 @@ export default function App() {
       ? "text-yellow-300 border-yellow-500/70 bg-neutral-800"
       : "text-gray-300 border-transparent hover:text-gray-100 hover:border-neutral-600"
   ].join(" ");
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <p className="text-white">Loading...</p>
+      </div>
+    );
+  }
+
+  // Show login if not authenticated
+  if (!user) {
+    return <Login />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-800 text-gray-100 p-6">
