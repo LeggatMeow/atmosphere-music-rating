@@ -162,11 +162,6 @@ export default function App() {
     );
   }
 
-  // Show login if not authenticated
-  if (!user) {
-    return <Login />;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-800 text-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
@@ -212,6 +207,27 @@ export default function App() {
             >
               My Top Tracks {"\u2B50"}
             </button>
+
+            {user ? (
+              <button
+                type="button"
+                onClick={() => {
+                  const { supabase } = require("../utils/supabaseClient");
+                  supabase.auth.signOut();
+                }}
+                className={navButtonClass(false)}
+              >
+                Logout ({user.email})
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setView("login")}
+                className={navButtonClass(view === "login")}
+              >
+                Login / Sign Up
+              </button>
+            )}
           </nav>
         </header>
 
@@ -282,6 +298,8 @@ export default function App() {
 
         {selectedAlbum ? (
           <AlbumDetail album={selectedAlbum} onBack={() => setSelectedAlbum(null)} />
+        ) : view === "login" ? (
+          <Login />
         ) : view === "top-tracks" ? (
           <TopTracksPage onSelectTrack={handleSelectTrack} />
         ) : filteredAlbums.length ? (
